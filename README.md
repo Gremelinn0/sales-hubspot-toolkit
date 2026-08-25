@@ -33,7 +33,7 @@ Le résultat : moins de tokens brûlés, on exploite les crédits qu'on paie dé
 Dans Claude Code :
 
 ```
-/plugin marketplace add Gremelinn0/sales-hubspot-crm-toolkit
+/plugin marketplace add Gremelinn0/sales-hubspot-toolkit
 /plugin install hubspot-crm-toolkit
 ```
 

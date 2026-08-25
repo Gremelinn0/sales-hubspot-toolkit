@@ -3,7 +3,7 @@ description: Vérifie que le toolkit HubSpot peut réellement fonctionner ici (t
 argument-hint: "[--uninstall]"
 ---
 
-# Setup — sales-hubspot-crm-toolkit
+# Setup — sales-hubspot-toolkit
 
 Tu exécutes le setup de ce pack. Trois fonctions, **dans cet ordre** : VÉRIFIER, INSTALLER, EXPLIQUER.
 
