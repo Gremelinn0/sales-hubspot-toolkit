@@ -35,7 +35,7 @@ garde-fou qui pointe vers un fichier que tu n'as pas installé n'est plus qu'une
 
 # Skill — HubSpot CRM Agent
 
-> 📇 **Avant de créer un nouveau projet/chat Breeze** (ou tout autre projet AI plateforme, ex Claude Design) → checker le registre `memory/plateformes-ai-registry.md` : un projet existant peut déjà couvrir le besoin, pas de raison d'en recréer un.
+> 📇 **Avant de créer un nouveau projet/chat Breeze** (ou tout autre projet AI plateforme, ex Claude Design) → checker ton registre des projets IA : un projet existant peut déjà couvrir le besoin, pas de raison d'en recréer un.
 
 ## Déclencheur
 

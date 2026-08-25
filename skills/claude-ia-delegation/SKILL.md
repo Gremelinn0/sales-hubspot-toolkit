@@ -22,7 +22,7 @@ Avant de se lancer dans une recherche/analyse, une question : **quel cerveau, le
 |---|---|---|
 | porte sur une plateforme avec une IA native + crédits (HubSpot…) | **l'IA de la plateforme** | via sa compétence plateforme (§2) |
 | = recherche / raisonnement général offloadable | **GPT / Gemini** | crédits déjà payés (§2) |
-| a besoin d'une connexion/contexte qu'une **autre session** a déjà (ex Chrome MCP mort ici mais vivant ailleurs) | **une autre session** | `send_message` / `spawn_task` (cf `/sessions`, CLAUDE-GLOBAL §8/§27) |
+| a besoin d'une connexion/contexte qu'une **autre session** a déjà (ex Chrome MCP mort ici mais vivant ailleurs) | **une autre session** | le canal inter-sessions de ton environnement, s'il en expose un |
 | = local, connexions, synthèse fine, jugement | **Claude directement** | c'est la valeur ajoutée, on la garde |
 
 **Si le bon cerveau n'est pas clair → trancher SEUL selon la situation. JAMAIS demander à l'utilisateur « sur quelle plateforme veux-tu que je travaille ? »** — on ouvre la session, on pose la question à l'agent de la plateforme, on récupère sa réponse, et on la ferme. Pas de temps perdu en questions. On ne délègue pas ce qui perdrait à l'être (données sensibles, jugement fin, décision produit) ; on ne fait pas soi-même ce qu'un cerveau gratuit fait aussi bien.
@@ -113,16 +113,16 @@ La règle vit ICI plutôt que dans une branche parce qu'elle ne décrit pas une 
 
 - **Ce skill ROUTE, il ne ré-implémente pas.** La méthode de chaque plateforme vit dans SA compétence (ex `claude-breeze`). Si ce fichier se met à décrire *comment* parler à une plateforme, c'est qu'une branche déborde → la sortir dans une compétence plateforme.
 - **Une branche non câblée reste un principe d'une ligne** (GPT/Gemini aujourd'hui) — pas d'abstraction sur du vide, elle grossit le jour où on la branche pour de vrai.
-- **La clôture appartient à la compétence plateforme** : c'est elle qui loge son travail dans le registre des projets IA (`plateformes-ai-registry.md`), pas l'orchestrateur.
+- **La clôture appartient à la compétence plateforme** : c'est elle qui loge son travail dans ton registre local des projets IA, pas l'orchestrateur.
 
 ## §4 Étendre — ajouter une plateforme (convention `claude-<cible>`)
 
 **Nommage des déclinaisons — `claude-<cible>`** : une compétence plateforme de cette famille se nomme **`claude-<cible>`** = « Claude délègue vers <cible> ». Ex **`claude-breeze`** (HubSpot Breeze). Demain `claude-gpt`, `claude-gemini`… Le **nom montre la délégation** ; la **méthode propre** de chaque cible (comment on la pilote, ses capacités ET ses limites) se décrit **dans SA compétence, jamais ici** — le chapeau reste mince.
 
-Nouvelle plateforme avec une IA / des crédits → (1) créer une **compétence plateforme `claude-<cible>`** (via `anthropic-skills:skill-creator` puis `/skill-factory`, CLAUDE-GLOBAL §1), (2) ajouter **une branche** dans le tableau §1 + §2.
+Nouvelle plateforme avec une IA / des crédits → (1) créer une **compétence plateforme `claude-<cible>`** (via `anthropic-skills:skill-creator`), (2) ajouter **une branche** dans le tableau §1 + §2.
 
 **Ce chapeau AMÉLIORE aussi ses déclinaisons** — son but n'est pas que de router, c'est de rendre la collaboration Claude↔IA-cible fluide dans le temps : quand une déclinaison gagne une capacité ou bute sur une limite (ex `claude-breeze` rate les chiffres exacts → on lit soi-même, Breeze raisonne), on l'affine dans **SA** compétence, et on tient ce §4 à jour de la famille.
 
 ## Skills liés
 
-`claude-breeze` (branche HubSpot — Breeze + audit écran-par-écran) · `/sessions` (router vers une autre session, CLAUDE-GLOBAL §27) · registre `plateformes-ai-registry.md` (la clôture, tenue par les compétences plateforme). Doctrine « cerveau le moins cher » : mémoire `token-economy-recommend-cheapest`.
+`claude-breeze` (branche HubSpot — Breeze + audit écran-par-écran), livrée dans ce pack. Les autres branches de la famille `claude-<cible>` et le registre des projets IA sont propres à ton installation : ce chapeau route vers elles quand elles existent, et ne suppose jamais leur présence.

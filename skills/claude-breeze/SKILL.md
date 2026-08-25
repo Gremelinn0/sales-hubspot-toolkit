@@ -55,7 +55,7 @@ Répondre à une question HubSpot en **déléguant au cerveau le moins cher qui 
 - **Breeze** = l'IA native de HubSpot, **tokens gratuits** → tout ce qu'elle peut analyser/répondre, on le lui demande.
 - **Navigation assistée** = traverser les écrans soi-même, **seulement quand aucun oracle ne peut répondre** (vérité éparpillée, pas d'API).
 
-> 🌍 **Cette compétence = 1ʳᵉ instance d'un principe plus large (cap, à généraliser quand une 2e plateforme le demande — pas avant).** Le principe : router chaque recherche vers le cerveau le moins cher — Breeze ici, **GPT / Gemini / une autre session** ailleurs — pour que Claude reste concentré sur la valeur ajoutée et le local qu'il est seul à pouvoir exécuter. Aujourd'hui = HubSpot. Demain, si un 2e contexte l'exige, la **méthode de navigation** (§3) est agnostique et s'extrait en skill cross-plateforme ; le **mode Breeze** (§2), lui, reste HubSpot-only. Aligne avec la doctrine « cerveau le moins cher » (mémoire `token-economy-recommend-cheapest`, règle « Breeze à fond »). → **Le chapeau `claude-ia-delegation`** (global global) orchestre ce choix et délègue ICI quand le contexte est HubSpot ; cette compétence = sa branche HubSpot.
+> 🌍 **Cette compétence = 1ʳᵉ instance d'un principe plus large (cap, à généraliser quand une 2e plateforme le demande — pas avant).** Le principe : router chaque recherche vers le cerveau le moins cher — Breeze ici, **GPT / Gemini / une autre session** ailleurs — pour que Claude reste concentré sur la valeur ajoutée et le local qu'il est seul à pouvoir exécuter. Aujourd'hui = HubSpot. Demain, si un 2e contexte l'exige, la **méthode de navigation** (§3) est agnostique et s'extrait en skill cross-plateforme ; le **mode Breeze** (§2), lui, reste HubSpot-only. Aligne avec la doctrine « cerveau le moins cher » (règle « Breeze à fond »). → **Le chapeau `claude-ia-delegation`** (livré dans ce pack) orchestre ce choix et délègue ICI quand le contexte est HubSpot ; cette compétence = sa branche HubSpot.
 
 ## §0bis LE PREMIER GESTE — se brancher sur la conversation EN COURS et travailler AVEC l'agent (gravé 2026-07-28)
 
@@ -90,14 +90,14 @@ Répondre à une question HubSpot en **déléguant au cerveau le moins cher qui 
 >
 > ℹ️ **Dépend d'un outil tiers d'archivage local** (une application qui capte et stocke les conversations IA à l'écran). Sans elle, ce paragraphe est simplement sans objet — tout le reste de la compétence fonctionne normalement.
 
-> **l'utilisateur 2026-07-23** : *« le skill devrait vérifier si c'est prêt quand on l'active et essayer de le brancher. »* La §4 réclame depuis toujours un **script d'archivage local** qui lit le DOM Breeze et écrit sur disque (récup du chat brut **sans tokens Claude**). Ce script **existe désormais** : l'outil d'archivage **détecte l'iframe Breeze, scrape la réponse et l'archive** comme n'importe quelle plateforme IA (portage prouvé LIVE le 2026-07-23).
+> **l'utilisateur 2026-07-23** : *« le skill devrait vérifier si c'est prêt quand on l'active et essayer de le brancher. »* La §4 réclame depuis toujours un **script d'archivage local** qui lit le DOM Breeze et écrit sur disque (récup du chat brut **sans tokens Claude**). Un tel outil **détecte l'iframe Breeze, scrape la réponse et l'archive** comme n'importe quelle plateforme IA. Ce pack ne le fournit pas : le §4 est un mode d'emploi si tu en as un.
 
 > ⚠️ **Correction (l'utilisateur 2026-07-24)** : la 1ʳᵉ version de ce §0bis gatait la lecture d'archive sur « l'app d'archivage tourne MAINTENANT + l'onglet HubSpot est ouvert MAINTENANT ». **Faux besoin** — le mécanisme §4 lit un **fichier SQLite au repos** (WAL, lecture seule), pas un flux live : rien n'a besoin d'être vrai au moment de l'invocation, seulement que **le fichier contienne une ligne utilisable**. L'ancien check ratait le cas le plus courant (Breeze utilisé hier, app fermée aujourd'hui → archive parfaitement bonne ignorée pour rien) et ne généralisait pas : *« ça doit marcher chez n'importe quel utilisateur »*, pas seulement à l'instant précis où son app d'archivage est ouverte.
 
 **Le seul vrai prérequis — l'archive a-t-elle une ligne utilisable ?**
 ```python
 import sqlite3, pathlib
-db = pathlib.Path.home() / ".speakapp" / "conversation_archive.db"
+db = pathlib.Path.home() / ".mon-archiveur" / "conversation_archive.db"  # <- adapte a ton outil
 if db.exists():
     con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
     rows = con.execute("SELECT session_key, COUNT(*), MAX(ts_capture) FROM messages WHERE platform='hubspot' GROUP BY session_key").fetchall()
@@ -191,7 +191,7 @@ Certaines fonctionnalités n'ont **aucune API de dump** — leur vérité est r�
 
 ## §4 Clôture — loger dans le registre des plateformes AI
 
-En finissant, la compétence **absorbe son travail** : elle loge dans `memory/plateformes-ai-registry.md` le projet/chat Breeze utilisé ou créé, et tout asset AI croisé pendant l'audit qui n'y est pas encore (source Claude Design, vue automatisée…). Colonnes en tête du fichier. Même passe, jamais différé — c'est ce qui évite de recréer la fois d'après. **Avant** d'ouvrir un nouveau projet/chat → checker le registre d'abord (il existe peut-être déjà).
+En finissant, la compétence **absorbe son travail** : elle loge dans **ton registre local des projets IA** le projet/chat Breeze utilisé ou créé, et tout asset AI croisé pendant l'audit qui n'y est pas encore (source Claude Design, vue automatisée…). Colonnes en tête du fichier. Même passe, jamais différé — c'est ce qui évite de recréer la fois d'après. **Avant** d'ouvrir un nouveau projet/chat → checker le registre d'abord (il existe peut-être déjà).
 
 **📼 Récupérer une sortie Breeze — LIRE LE DOM DU DOCUMENT (ni le presse-papier, ni le chat)**
 
@@ -214,15 +214,15 @@ Breeze rend ses analyses comme de vrais **documents Markdown** dans la conversat
 
 **Ce qui reste vrai :**
 - **Garde seulement l'utile réutilisable** (doc/audit client que Breeze revisite). Pas de chat trivial jetable.
-- **Range** dans `memory/clients/<slug>/breeze-logs/<date>-<sujet>.md`, versions **DATÉES**. **Jamais re-télécharger proactivement** → nouvelle capture datée à la demande. Pas de miroir live, pas de « bordel » de resync.
-- ⚡ **Le script d'archivage — LIVRÉ + BRANCHÉ le 2026-07-23** : il lit le DOM Breeze (iframe `chatspot-widget-ui`) + archive chaque message, **sans tokens Claude** (portage prouvé LIVE).
+- **Range** dans ton arborescence client, par exemple `<clients>/<slug>/breeze-logs/<date>-<sujet>.md`, versions **DATÉES**. **Jamais re-télécharger proactivement** → nouvelle capture datée à la demande. Pas de miroir live, pas de « bordel » de resync.
+- ⚡ **Le script d'archivage — OPTIONNEL, non fourni par ce pack.** Si tu disposes d'un outil local qui lit le DOM Breeze (iframe `chatspot-widget-ui`) et archive chaque message, tu récupères le chat brut **sans tokens Claude**. Sans lui, ce §4 se saute : les modes ci-dessus suffisent.
 
-  **Mécanisme PROUVÉ sur données réelles (2026-07-23, requête exécutée, résultat vérifié — pas théorique)** : l'archive est une **SQLite locale**, chemin **fixe** `~/.speakapp/conversation_archive.db`, table `messages(session_key, platform, role, text, ts_message, ts_capture, metadata)`. Pour une conversation Breeze, `platform='hubspot'` et `session_key='ws_<tab_id>'` (le tab_id Chrome de l'onglet HubSpot, format `ws_` commun à toutes les plateformes WS Bridge).
+  **Mécanisme PROUVÉ sur données réelles (2026-07-23, requête exécutée, résultat vérifié — pas théorique)** : l'archive est une **SQLite locale** ecrite par ton outil d'archivage (chemin propre a cet outil), table `messages(session_key, platform, role, text, ts_message, ts_capture, metadata)`. Pour une conversation Breeze, `platform='hubspot'` et `session_key='ws_<tab_id>'` (le tab_id Chrome de l'onglet HubSpot, format `ws_` commun à toutes les plateformes WS Bridge).
 
   **Requête de lecture** (Python stdlib, zéro dépendance) :
   ```python
   import sqlite3, pathlib
-  db = pathlib.Path.home() / ".speakapp" / "conversation_archive.db"
+  db = pathlib.Path.home() / ".mon-archiveur" / "conversation_archive.db"  # <- adapte a ton outil
   con = sqlite3.connect(str(db))
   # 1. lister les conversations hubspot archivées
   con.execute("SELECT session_key, COUNT(*) FROM messages WHERE platform='hubspot' GROUP BY session_key").fetchall()
@@ -239,7 +239,7 @@ Breeze rend ses analyses comme de vrais **documents Markdown** dans la conversat
   - **Ouvre en LECTURE SEULE** (l'app tient la DB en mode WAL) : `sqlite3.connect("file:" + str(db) + "?mode=ro", uri=True)` — jamais une connexion writable sur la DB d'un autre process.
   - **Best-effort, jamais bloquant** : DB absente / schéma changé / 0 ligne hubspot → fallback propre (lecture du DOM pour garder, `innerText` pour du jetable). C'est un outil de **récupération / vérification**, pas le défaut de production.
 
-Où c'est rangé (pour les futures sessions) : ton dossier `breeze-logs/` ; le registre `plateformes-ai-registry.md` liste chaque capture (colonne « Local (chemin) » — jamais un tiret pour Breeze). Puis clore avec le **récap d'opérations** du chapeau `claude-ia-delegation` § clôture.
+Où c'est rangé (pour les futures sessions) : ton dossier `breeze-logs/` ; ton registre des projets IA liste chaque capture (colonne « Local (chemin) » — jamais un tiret pour Breeze). Puis clore avec le **récap d'opérations** du chapeau `claude-ia-delegation` § clôture.
 
 ## §5 Garde-fous
 
@@ -252,4 +252,4 @@ Premier run du mode navigation (Chrome MCP, lecture seule) : 9 saved views + l'�
 
 ## Skills liés
 
-`hubspot-crm` (skill central, table de décision Breeze/MCP/Computer-Use §7) · `hubspot-segments-audit` + `hubspot-workflows-audit` (audit API-first, quand une API de dump existe) · `crm-investigation-output` (format verdict/email/infographie si l'audit débouche sur une action client) · registre `memory/plateformes-ai-registry.md` (la clôture §4) · `claude-gpt` (déclinaison sœur de la famille `claude-<cible>` — même philosophie « opérateur = agent », mais ChatGPT au lieu de Breeze) · `claude-ia-delegation` (le chapeau qui route vers cette compétence quand le contexte est HubSpot).
+`hubspot-crm` (skill central, table de décision Breeze/MCP/Computer-Use §7) · `hubspot-segments-audit` + `hubspot-workflows-audit` (audit API-first, quand une API de dump existe) · `crm-investigation-output` (format verdict/email/infographie si l'audit débouche sur une action client) · ton registre des projets IA (la clôture §4) · `claude-ia-delegation` (le chapeau qui route vers cette compétence quand le contexte est HubSpot).
