@@ -67,7 +67,7 @@ B. [action] — [coût / délai]
 
 ### 2. Email client (draft)
 
-Appliquer les règles writing-skills :
+Appliquer ces règles de rédaction :
 - Phrases courtes
 - Pas d'em-dash
 - Pas de "Voici" en début de phrase
