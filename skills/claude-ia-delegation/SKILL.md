@@ -1,31 +1,61 @@
 ---
 name: claude-ia-delegation
 description: >-
-  L'ORCHESTRATEUR d'arbitrage de tokens : au lieu que Claude fasse tout le travail lui-même, router chaque recherche / diagnostic / investigation vers le CERVEAU LE MOINS CHER qui sait la faire, puis garder Claude pour la valeur ajoutée et le local qu'il est seul à pouvoir exécuter. Compétence CHAPEAU (mince) qui DÉCIDE selon le contexte et DÉLÈGUE à une compétence plateforme — elle ne ré-implémente jamais la méthode d'une plateforme. Routage : contexte HubSpot → `claude-breeze` (Breeze gratuit + audit écran-par-écran) ; recherche générale offloadable → GPT / Gemini (crédits déjà payés) ; une autre session a déjà la connexion/le contexte → on lui envoie le travail ; seul Claude peut le faire (fichiers locaux, connexions, synthèse fine) → il le fait. À invoquer dès qu'une tâche de recherche/analyse pourrait être déléguée pour économiser les tokens, sur "délègue ça", "au lieu de tout faire toi-même", "économise mes tokens", "utilise Breeze / GPT / Gemini", "arbitrage de tokens", "fais bosser une autre plateforme / une autre session", "cerveau le moins cher", ou tout diagnostic/recherche où faire tout soi-même serait du gaspillage alors qu'une IA moins chère peut répondre.
+  L'ORCHESTRATEUR d'arbitrage de contexte et de coût : choisir le cerveau adapté, puis séparer le canal du mandat, le canal du livrable, la cadence et la supervision. Compétence CHAPEAU (mince) qui DÉCIDE selon le contexte et DÉLÈGUE à une compétence plateforme ; elle ne ré-implémente jamais sa méthode. Le coût et le quota se vérifient dans le plan actif, sans supposer qu'une IA native ou incluse est gratuite. À invoquer sur "délègue ça", "économise mes tokens", "utilise Breeze / GPT / Gemini", "arbitrage de tokens", "fais bosser une autre plateforme / une autre session", "quel canal pour le mandat", "où récupérer le livrable", ou tout diagnostic/recherche où la délégation doit être bornée et prouvée.
+argument-hint: "[gpt|codex|gemini|hubspot|session|navigateur|desktop|claude]"
 ---
 
-# Skill — claude-ia-delegation (déléguer au cerveau le moins cher)
+# Skill — claude-ia-delegation (déléguer au cerveau adapté)
 
-## §0 Le principe — arbitrage de tokens
+> 🎛️ **LES MODES : COMME CAVEMAN, UN MOT APRÈS LA COMMANDE CHOISIT LA CIBLE.**
+> `/claude-ia-delegation` seul : le chapeau choisit (§1), sans rien demander. Le mot tapé arrive en
+> fin de compétence, sous « ARGUMENTS ».
+>
+> | Mode | Cible | Où ça mène |
+> |---|---|---|
+> | *(rien)* | le chapeau choisit | §1 |
+> | `gpt` | ChatGPT | branche « Recherche générale » (§2) |
+> | `codex` | Codex, l'agent OpenAI local qui a le disque | transport non inclus dans ce pack |
+> | `gemini` | Gemini | branche « Recherche générale » (§2) |
+> | `hubspot` | Breeze, l'IA de HubSpot | `claude-breeze`, inclus dans ce pack |
+> | `session` | une autre session Claude, vivante | branche « Autre session » (§2) |
+> | `navigateur` | d'un onglet web à un autre | transport non inclus dans ce pack |
+> | `desktop` | depuis Codex, une session Claude Desktop | transport non inclus dans ce pack |
+> | `claude` | personne : Claude fait lui-même | branche « Local / valeur ajoutée » (§2) |
+>
+> Un mot inconnu, ou un transport absent de ton installation : le dire en une ligne, puis choisir
+> seul (§1). La liste vit ici et dans l'`argument-hint` de l'en-tête, qui l'affiche quand on tape la
+> commande ; une branche ajoutée (§4) ajoute son mode aux deux.
 
-Au lieu que Claude fasse **tout** le travail lui-même (cher en tokens), router chaque tâche vers **le cerveau le moins cher qui sait la faire** — les IA natives des plateformes (crédits gratuits/déjà payés), GPT/Gemini, ou une autre session déjà connectée — et garder Claude pour ce qu'il est **seul** à pouvoir faire : le local (fichiers, connexions) et la synthèse à forte valeur ajoutée.
+## §0 Le principe — arbitrage de capacité, de contexte et de coût
 
-But = **efficience token + coût** : exploiter les crédits qu'on paie déjà ailleurs, ne pas cramer les tokens Claude sur ce qu'une IA moins chère fait aussi bien.
+Router chaque tâche vers **le cerveau adapté qui sait la faire sans perte de qualité** : une IA native de plateforme, ChatGPT/Gemini ou une autre session déjà contextualisée. Le coût réel et le quota disponible se vérifient dans le plan et le modèle actifs ; ils ne se déduisent jamais de mots comme « natif », « inclus » ou « déjà payé ».
 
-## §1 Le décideur — choisir le cerveau (le moins cher d'abord)
+But = **efficience de contexte + coût** : confier le volume au bon agent, garder ici le jugement fin et ne transmettre que ce qui est nécessaire à l'exécution et à la preuve.
 
-> 🎯 **Argument optionnel — forcer la plateforme.** On peut préciser la plateforme en suffixe, comme le mode de caveman (`/caveman ultra`) : ex **`/claude-ia-delegation hubspot`** force la branche HubSpot. **Totalement optionnel.** L'utilisateur le précise, OU le contexte de la conversation le rend clair → on prend cette plateforme. Sinon → n'importe laquelle, on s'en fout, **on ne demande RIEN** (cf la règle plus bas).
+### Le modèle à quatre couches
 
-Avant de se lancer dans une recherche/analyse, une question : **quel cerveau, le moins cher, peut la faire ?** Descendre l'échelle, s'arrêter au premier qui suffit :
+1. **Routeur** : agent choisi et raison du choix.
+2. **Mandat** : canal de commande qui atteint la bonne session avec un brief borné.
+3. **Livrable** : canal d'artefact durable, souvent distinct. Un fichier, un transcript ciblé ou GitHub transporte un résultat ; il ne crée pas une conversation magique entre agents.
+4. **Cadre** : preuve attendue, cadence, limite de tours, repli et condition d'arrêt.
+
+Une **boucle** réveille une même session. Elle ne transporte pas le travail entre deux agents.
+
+## §1 Le décideur — choisir le cerveau adapté (coût inclus)
+
+> 🎯 **Un mode passé en argument force la branche** (bloc 🎛️ en tête, ex. **`/claude-ia-delegation hubspot`**). **Totalement optionnel.** L'utilisateur le précise, OU le contexte de la conversation le rend clair → on prend cette plateforme. Sinon → ce tableau décide, et **on ne demande RIEN** (cf la règle plus bas).
+
+Avant de se lancer dans une recherche/analyse, une question : **quel cerveau a la capacité, le contexte et le coût adaptés à cette tâche ?** Écarter d'abord les options qui dégradent la qualité ou la preuve, puis retenir la moins coûteuse parmi celles qui suffisent :
 
 | La tâche… | Cerveau | Comment |
 |---|---|---|
 | porte sur une plateforme avec une IA native + crédits (HubSpot…) | **l'IA de la plateforme** | via sa compétence plateforme (§2) |
-| = recherche / raisonnement général offloadable | **GPT / Gemini** | crédits déjà payés (§2) |
+| = recherche / raisonnement général offloadable | **GPT / Gemini** | accès, quota et coût à vérifier (§2) |
 | a besoin d'une connexion/contexte qu'une **autre session** a déjà (ex Chrome MCP mort ici mais vivant ailleurs) | **une autre session** | le canal inter-sessions de ton environnement, s'il en expose un |
 | = local, connexions, synthèse fine, jugement | **Claude directement** | c'est la valeur ajoutée, on la garde |
 
-**Si le bon cerveau n'est pas clair → trancher SEUL selon la situation. JAMAIS demander à l'utilisateur « sur quelle plateforme veux-tu que je travaille ? »** — on ouvre la session, on pose la question à l'agent de la plateforme, on récupère sa réponse, et on la ferme. Pas de temps perdu en questions. On ne délègue pas ce qui perdrait à l'être (données sensibles, jugement fin, décision produit) ; on ne fait pas soi-même ce qu'un cerveau gratuit fait aussi bien.
+**Si le bon cerveau n'est pas clair → trancher SEUL selon la situation. JAMAIS demander à l'utilisateur « sur quelle plateforme veux-tu que je travaille ? »** — on ouvre la session, on pose la question à l'agent de la plateforme, on récupère sa réponse, et on la ferme. Pas de temps perdu en questions. On ne délègue pas ce qui perdrait à l'être (données sensibles, jugement fin, décision produit) ; on ne fait pas soi-même ce qu'un cerveau accessible et moins coûteux dans le plan actif fait aussi bien.
 
 ## §1bis L'ORDRE DES GESTES — collaborer d'abord, capturer en clôture (gravé 2026-07-28, vaut pour TOUTE la famille)
 
@@ -88,7 +118,7 @@ La mécanique concrète de ce partage appartient à chaque branche (§2), pas ic
 
 La règle vit ICI plutôt que dans une branche parce qu'elle ne décrit pas une plateforme : elle décrit **un client web qui a perdu son flux**. Toute déclinaison `claude-<cible>` pilotée par le navigateur la subit.
 
-**Le symptôme, sous ses masques** : la réponse s'arrête en plein milieu · le fil paraît figé · un message envoyé ne produit aucun tour · « elle n'a pas terminé » depuis dix minutes. **Ni le serveur ni le modèle ne sont en cause.**
+**Le symptôme, sous ses masques** : la réponse s'arrête en plein milieu · le fil paraît figé · un message envoyé ne produit aucun tour · « elle n'a pas terminé » depuis dix minutes. **Le symptôme seul ne permet pas d'attribuer la cause au serveur, au modèle ou à une protection volontaire de la plateforme.**
 
 **Le geste** : ① onglet **au premier plan** · ② **vrai clic DANS la page**, dans la conversation. Le flux reprend.
 
@@ -100,12 +130,12 @@ La règle vit ICI plutôt que dans une branche parce qu'elle ne décrit pas une 
 
 ## §2 Les branches (routage — le chapeau POINTE, il ne fait pas)
 
-- **HubSpot** → **`claude-breeze`** (projet Clients) : mode Breeze (IA native, gratuit) pour un diagnostic, mode navigation écran-par-écran pour une fonctionnalité sans API. La méthode HubSpot vit là-bas, pas ici.
+- **HubSpot** → **`claude-breeze`** (projet Clients) : mode Breeze (IA native ; quota et coût à vérifier dans le portail) pour un diagnostic, mode navigation écran-par-écran pour une fonctionnalité sans API. La méthode HubSpot vit là-bas, pas ici.
 - **Recherche générale** → **GPT / Gemini** : principe posé, mécanique à câbler quand on l'utilise vraiment (leur UI via Chrome MCP, ou un MCP dédié si connecté). Ne pas gonfler ce skill avec cette mécanique avant de l'avoir.
 - **Autre session** → router le travail à la session qui a la connexion/le contexte (`send_message`), plutôt que de tout refaire ici.
 - **Local / valeur ajoutée** → Claude exécute directement (le reste de ses compétences).
 
-> 📡 **LE CANAL DE LECTURE, commun à TOUTES les branches.** Les branches ci-dessus disent *à qui* on parle ; il reste à régler *par où on écoute*. C'est la mécanique concrète du corollaire §1ter : dès que la machine expose un canal étroit — une application locale qui suit les sessions IA, une API, un export —, on lui demande **la liste des sessions, leur état, et la dernière réponse seule** au lieu d'aspirer la page. L'écart se compte en ordre de grandeur, et surtout **l'attente devient gratuite** : elle se passe dans l'outil, pas dans la boucle de l'agent, donc on ne paie plus un regard toutes les dix secondes.
+> 📡 **LE CANAL DE LECTURE, commun à TOUTES les branches.** Les branches ci-dessus disent *à qui* on parle ; il reste à régler *par où on écoute*. C'est la mécanique concrète du corollaire §1ter : dès que la machine expose un canal étroit — une application locale qui suit les sessions IA, une API, un export —, on lui demande **la liste des sessions, leur état, et la dernière réponse seule** au lieu d'aspirer la page. L'écart se compte en ordre de grandeur, et surtout **l'attente n'ajoute plus une boucle de polling** : elle se passe dans l'outil, pas dans la boucle de l'agent, donc on ne relit plus la page toutes les dix secondes.
 > ⚠️ **Lecture seule.** Écrire reste le geste de la branche concernée, avec son consentement — un capteur qui écrirait changerait de nature.
 > ⚠️ Un tel capteur dépend d'un outil local : s'il ne tourne pas, il doit **le dire** au lieu de rendre une liste vide. C'est toute la différence entre « il n'y a rien » et « je ne vois rien », et c'est la seule chose à exiger d'un canal de lecture.
 
@@ -115,11 +145,13 @@ La règle vit ICI plutôt que dans une branche parce qu'elle ne décrit pas une 
 - **Une branche non câblée reste un principe d'une ligne** (GPT/Gemini aujourd'hui) — pas d'abstraction sur du vide, elle grossit le jour où on la branche pour de vrai.
 - **La clôture appartient à la compétence plateforme** : c'est elle qui loge son travail dans ton registre local des projets IA, pas l'orchestrateur.
 
+**Contrat route par route** : chaque branche déclare avant l'envoi le canal du mandat, le canal du livrable, la preuve attendue, un repli réellement disponible et une limite de tours. Elle s'arrête sur **livrable prouvé**, **blocage prouvé après repli** ou **limite atteinte**. Une boucle ne prolonge jamais une délégation sans nouvel état observable.
+
 ## §4 Étendre — ajouter une plateforme (convention `claude-<cible>`)
 
 **Nommage des déclinaisons — `claude-<cible>`** : une compétence plateforme de cette famille se nomme **`claude-<cible>`** = « Claude délègue vers <cible> ». Ex **`claude-breeze`** (HubSpot Breeze). Demain `claude-gpt`, `claude-gemini`… Le **nom montre la délégation** ; la **méthode propre** de chaque cible (comment on la pilote, ses capacités ET ses limites) se décrit **dans SA compétence, jamais ici** — le chapeau reste mince.
 
-Nouvelle plateforme avec une IA / des crédits → (1) créer une **compétence plateforme `claude-<cible>`** (via `anthropic-skills:skill-creator`), (2) ajouter **une branche** dans le tableau §1 + §2.
+Nouvelle plateforme avec une IA / des crédits → (1) créer une **compétence plateforme `claude-<cible>`** (via `anthropic-skills:skill-creator`), (2) ajouter **une branche** dans le tableau §1 + §2, (3) ajouter **son mode** au bloc 🎛️ et à l'`argument-hint` de l'en-tête.
 
 **Ce chapeau AMÉLIORE aussi ses déclinaisons** — son but n'est pas que de router, c'est de rendre la collaboration Claude↔IA-cible fluide dans le temps : quand une déclinaison gagne une capacité ou bute sur une limite (ex `claude-breeze` rate les chiffres exacts → on lit soi-même, Breeze raisonne), on l'affine dans **SA** compétence, et on tient ce §4 à jour de la famille.
 

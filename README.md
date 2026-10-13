@@ -14,6 +14,8 @@ Sa particularité : elle est bâtie sur un principe d'**arbitrage de tokens**. A
 
 Le résultat : moins de tokens brûlés, on exploite les crédits qu'on paie déjà ailleurs.
 
+Un mot après la commande force la cible, comme les modes de Caveman : `/claude-ia-delegation hubspot`, `gpt`, `gemini`, `session`, `claude`… La liste s'affiche quand on tape la commande. Sans mot, le chapeau choisit seul.
+
 ## Les compétences
 
 | Compétence | Ce qu'elle fait |
