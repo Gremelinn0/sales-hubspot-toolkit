@@ -6,7 +6,7 @@ Sa particularité : elle est bâtie sur un principe d'**arbitrage de tokens**. A
 
 ## Le principe — déléguer au cerveau le moins cher
 
-`claude-ia-delegation` est le **chapeau** : devant une recherche ou un diagnostic, il choisit le cerveau le moins coûteux, puis délègue.
+Le **chapeau** qui choisit le cerveau le moins coûteux devant une recherche ou un diagnostic, `claude-ia-delegation`, vit dans son propre pack : [productivity-claude-gpt-bridge](https://github.com/Gremelinn0/productivity-claude-gpt-bridge). Installe-le aussi si tu veux qu'il choisisse seul ; ce pack-ci en porte la branche HubSpot.
 
 - Contexte HubSpot → **Breeze** (l'IA du portail, crédits gratuits) ou un audit écran-par-écran.
 - Recherche générale → GPT / Gemini (crédits déjà payés).
@@ -14,13 +14,12 @@ Sa particularité : elle est bâtie sur un principe d'**arbitrage de tokens**. A
 
 Le résultat : moins de tokens brûlés, on exploite les crédits qu'on paie déjà ailleurs.
 
-Un mot après la commande force la cible, comme les modes de Caveman : `/claude-ia-delegation hubspot`, `gpt`, `gemini`, `session`, `claude`… La liste s'affiche quand on tape la commande. Sans mot, le chapeau choisit seul.
+Avec le chapeau installé, `/claude-ia-delegation hubspot` envoie directement vers la branche HubSpot de ce pack.
 
 ## Les compétences
 
 | Compétence | Ce qu'elle fait |
 |---|---|
-| **claude-ia-delegation** | Le chapeau — route chaque tâche vers le cerveau le moins cher. |
 | **claude-breeze** | Investiguer une question HubSpot au moindre coût : mode Breeze (demander à l'IA native) OU audit écran-par-écran des fonctionnalités sans API (Buyer Intent, Lead Scoring, Permissions…). |
 | **hubspot-crm** | Le socle : contexte portail, catalogue des outils MCP HubSpot, protocole d'investigation, table de décision Breeze / MCP / navigation. |
 | **hubspot-segments-audit** | Cartographie + audit de tous les segments/listes via API (filtres réels, volumes, santé). |
@@ -49,7 +48,7 @@ compétence.
 
 | Prérequis | Qui en a besoin | Sans ça |
 |---|---|---|
-| **Rien** | `claude-ia-delegation` (chapeau de routage), `crm-investigation-output` (produit des livrables) | — |
+| **Rien** | `crm-investigation-output` (produit des livrables) | — |
 | **Contrôle du navigateur** (extension Claude pour Chrome, session HubSpot connectée) | `claude-breeze`, `hubspot-create-list`, `hubspot-email-design`, `hubspot-marketing-segments`, `hubspot-workflows-audit` | Ces compétences ne peuvent **rien** faire : elles lisent et pilotent des écrans |
 | **Token Private App** | `hubspot-create-list`, `hubspot-marketing-segments`, `hubspot-segments-audit`, `hubspot-workflows-audit` | Les appels API échouent en 401 |
 

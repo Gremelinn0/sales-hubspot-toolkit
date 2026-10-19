@@ -55,7 +55,7 @@ Répondre à une question HubSpot en **déléguant au cerveau le moins cher qui 
 - **Breeze** = l'IA native de HubSpot, **tokens gratuits** → tout ce qu'elle peut analyser/répondre, on le lui demande.
 - **Navigation assistée** = traverser les écrans soi-même, **seulement quand aucun oracle ne peut répondre** (vérité éparpillée, pas d'API).
 
-> 🌍 **Cette compétence = 1ʳᵉ instance d'un principe plus large (cap, à généraliser quand une 2e plateforme le demande — pas avant).** Le principe : router chaque recherche vers le cerveau le moins cher — Breeze ici, **GPT / Gemini / une autre session** ailleurs — pour que Claude reste concentré sur la valeur ajoutée et le local qu'il est seul à pouvoir exécuter. Aujourd'hui = HubSpot. Demain, si un 2e contexte l'exige, la **méthode de navigation** (§3) est agnostique et s'extrait en skill cross-plateforme ; le **mode Breeze** (§2), lui, reste HubSpot-only. Aligne avec la doctrine « cerveau le moins cher » (règle « Breeze à fond »). → **Le chapeau `claude-ia-delegation`** (livré dans ce pack) orchestre ce choix et délègue ICI quand le contexte est HubSpot ; cette compétence = sa branche HubSpot.
+> 🌍 **Cette compétence = 1ʳᵉ instance d'un principe plus large (cap, à généraliser quand une 2e plateforme le demande — pas avant).** Le principe : router chaque recherche vers le cerveau le moins cher — Breeze ici, **GPT / Gemini / une autre session** ailleurs — pour que Claude reste concentré sur la valeur ajoutée et le local qu'il est seul à pouvoir exécuter. Aujourd'hui = HubSpot. Demain, si un 2e contexte l'exige, la **méthode de navigation** (§3) est agnostique et s'extrait en skill cross-plateforme ; le **mode Breeze** (§2), lui, reste HubSpot-only. Aligne avec la doctrine « cerveau le moins cher » (règle « Breeze à fond »). → **Le chapeau `claude-ia-delegation`** (pack séparé `productivity-claude-gpt-bridge`, https://github.com/Gremelinn0/productivity-claude-gpt-bridge) orchestre ce choix et délègue ICI quand le contexte est HubSpot ; cette compétence = sa branche HubSpot.
 
 ## §0bis LE PREMIER GESTE — se brancher sur la conversation EN COURS et travailler AVEC l'agent (gravé 2026-07-28)
 
@@ -239,7 +239,7 @@ Breeze rend ses analyses comme de vrais **documents Markdown** dans la conversat
   - **Ouvre en LECTURE SEULE** (l'app tient la DB en mode WAL) : `sqlite3.connect("file:" + str(db) + "?mode=ro", uri=True)` — jamais une connexion writable sur la DB d'un autre process.
   - **Best-effort, jamais bloquant** : DB absente / schéma changé / 0 ligne hubspot → fallback propre (lecture du DOM pour garder, `innerText` pour du jetable). C'est un outil de **récupération / vérification**, pas le défaut de production.
 
-Où c'est rangé (pour les futures sessions) : ton dossier `breeze-logs/` ; ton registre des projets IA liste chaque capture (colonne « Local (chemin) » — jamais un tiret pour Breeze). Puis clore avec le **récap d'opérations** du chapeau `claude-ia-delegation` § clôture.
+Où c'est rangé (pour les futures sessions) : ton dossier `breeze-logs/` ; ton registre des projets IA liste chaque capture (colonne « Local (chemin) » — jamais un tiret pour Breeze). Puis clore par un **récap d'opérations** (avec le chapeau `claude-ia-delegation` installé, celui de son § clôture).
 
 ## §5 Garde-fous
 
@@ -252,4 +252,4 @@ Premier run du mode navigation (Chrome MCP, lecture seule) : 9 saved views + l'�
 
 ## Skills liés
 
-`hubspot-crm` (skill central, table de décision Breeze/MCP/Computer-Use §7) · `hubspot-segments-audit` + `hubspot-workflows-audit` (audit API-first, quand une API de dump existe) · `crm-investigation-output` (format verdict/email/infographie si l'audit débouche sur une action client) · ton registre des projets IA (la clôture §4) · `claude-ia-delegation` (le chapeau qui route vers cette compétence quand le contexte est HubSpot).
+`hubspot-crm` (skill central, table de décision Breeze/MCP/Computer-Use §7) · `hubspot-segments-audit` + `hubspot-workflows-audit` (audit API-first, quand une API de dump existe) · `crm-investigation-output` (format verdict/email/infographie si l'audit débouche sur une action client) · ton registre des projets IA (la clôture §4) · `claude-ia-delegation` (le chapeau qui route vers cette compétence quand le contexte est HubSpot ; pack `productivity-claude-gpt-bridge`).
