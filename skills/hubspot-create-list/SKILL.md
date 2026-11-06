@@ -52,14 +52,14 @@ Pour chaque liste à créer, le skill attend :
 
 ```yaml
 listes:
-  - nom: "Main list Hospitality 2026+"          # naming aligné existant
+  - nom: "Main list Software 2026+"          # naming aligné existant
     object_type: "Companies"                     # Companies / Contacts / Deals / Tickets
     type: "Active"                               # Active (dynamique) ou Static
     folder: "Clients"                            # nom folder ; sera matché dans tree
     filters:
       - property: "Industry"
         operator: "is any of"
-        value: "Hospitality"
+        value: "Software"
       - property: "Create date"
         operator: "is after"
         value: "12/31/2025"                      # MM/DD/YYYY format
@@ -177,7 +177,7 @@ Pour chaque filter dans `filters[]` :
 ### Filters check
 
 - Property name exact (case-sensitive HubSpot)
-- Value matches enum HubSpot (Hospitality, Restaurants, Gambling & Casinos, etc.)
+- Value matches enum HubSpot (Software, Retail, Insurance, etc.)
 - Date format MM/DD/YYYY US
 
 Si validation fail → STOP + propose ajustement l'utilisateur.
@@ -233,16 +233,16 @@ Pour créer N listes d'un coup (ex : 4 listes 2026+ par secteur) :
 
 ```yaml
 listes:
-  - nom: "Main list Hospitality 2026+"
+  - nom: "Main list Software 2026+"
     object_type: "Companies"
     type: "Active"
     folder: "Clients"
     filters:
-      - {property: "Industry", operator: "is any of", value: "Hospitality"}
+      - {property: "Industry", operator: "is any of", value: "Software"}
       - {property: "Create date", operator: "is after", value: "12/31/2025"}
     portal: "<portal-id>"
     client_slug: "<client-slug>"
-  - nom: "Main list Hotels 2026+"
+  - nom: "Main list Logistics 2026+"
     # ...similar
 ```
 
@@ -250,10 +250,10 @@ listes:
 
 ```
 ✅ 4 listes créées :
-- 627 Main list Hospitality 2026+ (15 companies)
-- 628 Main list Hotels 2026+ (1 company)
-- 629 Main list - Restaurants 2026+ (0 companies)
-- 630 Main list Casinos 2026+ (0 companies)
+- 101 Main list Software 2026+ (12 companies)
+- 102 Main list Logistics 2026+ (1 company)
+- 103 Main list - Retail 2026+ (0 companies)
+- 104 Main list Insurance 2026+ (0 companies)
 
 Inventory + actions-log mis à jour.
 ```
@@ -275,14 +275,14 @@ HubSpot Lists API v3 endpoint : `POST /crm/v3/lists/`
 Body :
 ```json
 {
-  "name": "Main list Hospitality 2026+",
+  "name": "Main list Software 2026+",
   "objectTypeId": "0-2",
   "processingType": "DYNAMIC",
   "filterBranch": {
     "filterBranchType": "AND",
     "filterBranches": [],
     "filters": [
-      {"property": "industry", "operator": "IN", "values": ["HOSPITALITY"]},
+      {"property": "industry", "operator": "IN", "values": ["COMPUTER_SOFTWARE"]},
       {"property": "createdate", "operator": "GTE", "value": "2026-01-01T00:00:00Z"}
     ]
   }

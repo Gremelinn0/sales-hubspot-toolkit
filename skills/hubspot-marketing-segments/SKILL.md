@@ -38,7 +38,7 @@ garde-fou qui pointe vers un fichier que tu n'as pas installé n'est plus qu'une
 
 **Règle HubSpot non négociable** : un **email marketing / newsletter s'envoie à des CONTACTS, jamais à des entreprises.** Donc pour cibler « les hôtels / restaurants / casinos », on ne peut PAS envoyer sur une liste d'entreprises → il faut une **liste de contacts** dont la **société associée** matche le secteur.
 
-**Quand l'utiliser** : l'utilisateur (ou la cliente) veut envoyer une newsletter / campagne email à un secteur, et la cible existe en **liste d'entreprises** (companies). Ce skill crée la **liste contacts miroir** prête pour Marketing Emails → Send to.
+**Quand l'utiliser** : l'utilisateur (ou le client) veut envoyer une newsletter / campagne email à un secteur, et la cible existe en **liste d'entreprises** (companies). Ce skill crée la **liste contacts miroir** prête pour Marketing Emails → Send to.
 
 ---
 
@@ -49,7 +49,7 @@ Pour chaque liste **entreprise** source → 1 segment **contact** miroir :
 | Filtre de la liste entreprise | Devient (dans la liste contact) |
 |---|---|
 | `Industry = X` | `Contact > société associée > Industry is any of X` |
-| `Company name contains "hotel"` | `Contact > société associée > Company name contains any of hotel` |
+| `Company name contains "logistic"` | `Contact > société associée > Company name contains any of logistic` |
 | `Create date is after JJ/MM/AAAA` | `Contact > société associée > Create date is after JJ/MM/AAAA` |
 | *(ajout systématique)* | `Contact > Email is known` |
 | *(ajout systématique)* | `Contact > Marketing contact status is any of Marketing contact` |
@@ -77,7 +77,7 @@ Structure : `OR > AND { filtres contact + branche ASSOCIATION vers la société 
 
 ```json
 {
-  "name": "Main list Casinos 2026+",
+  "name": "Main list Insurance 2026+",
   "objectTypeId": "0-1",
   "processingType": "DYNAMIC",
   "listFolderId": "<id-du-dossier-cible>",
@@ -95,7 +95,7 @@ Structure : `OR > AND { filtres contact + branche ASSOCIATION vers la société 
         "associationTypeId": 279, "associationCategory": "HUBSPOT_DEFINED",
         "filterBranches": [],
         "filters": [
-          {"property":"industry","operation":{"operator":"IS_ANY_OF","includeObjectsWithNoValueSet":false,"values":["GAMBLING_CASINOS"],"operationType":"ENUMERATION"},"filterType":"PROPERTY"},
+          {"property":"industry","operation":{"operator":"IS_ANY_OF","includeObjectsWithNoValueSet":false,"values":["INSURANCE"],"operationType":"ENUMERATION"},"filterType":"PROPERTY"},
           {"property":"createdate","operation":{"operator":"IS_AFTER","includeObjectsWithNoValueSet":false,"timePoint":{"timezoneSource":"CUSTOM","zoneId":"US/Eastern","year":2025,"month":12,"day":31,"hour":23,"minute":59,"second":59,"millisecond":999,"timeType":"DATE"},"endpointBehavior":"EXCLUSIVE","propertyParser":"VALUE","type":"TIME_POINT","operationType":"TIME_POINT"},"filterType":"PROPERTY"}
         ]
       }]
@@ -105,14 +105,14 @@ Structure : `OR > AND { filtres contact + branche ASSOCIATION vers la société 
 ```
 
 - **`associationTypeId: 279`** (HUBSPOT_DEFINED) = « toute société associée » au contact (contact 0-1 → company 0-2). `1` = société **primaire** seulement. Vérifier les ids du portail via `GET /crm/v4/associations/0-1/0-2/labels`.
-- `industry` est un **enum** : utiliser la **valeur interne** (`GAMBLING_CASINOS`, `RESTAURANTS`, `HOSPITALITY`…), pas le label. Récupérer via `get_properties(companies,["industry"])` (MCP) ou la doc.
-- Filtre `name contains` (ex Hotels) : `{"property":"name","operation":{"operator":"CONTAINS","values":["hotel"],"operationType":"MULTISTRING","includeObjectsWithNoValueSet":false},"filterType":"PROPERTY"}` à ajouter dans le `filters` de la branche ASSOCIATION.
+- `industry` est un **enum** : utiliser la **valeur interne** (`INSURANCE`, `RETAIL`, `COMPUTER_SOFTWARE`…), pas le label. Récupérer via `get_properties(companies,["industry"])` (MCP) ou la doc.
+- Filtre `name contains` (ex Logistics) : `{"property":"name","operation":{"operator":"CONTAINS","values":["logistic"],"operationType":"MULTISTRING","includeObjectsWithNoValueSet":false},"filterType":"PROPERTY"}` à ajouter dans le `filters` de la branche ASSOCIATION.
 
 ---
 
 ## §4 Convention nommage / dossier (CLAUDE.md projet)
 
-- **Même NOM** que la liste entreprise source (le type d'objet Contact vs Company suffit à distinguer). Ex : la liste contact s'appelle aussi `Main list Casinos 2026+`.
+- **Même NOM** que la liste entreprise source (le type d'objet Contact vs Company suffit à distinguer). Ex : la liste contact s'appelle aussi `Main list Insurance 2026+`.
 - **Même DOSSIER** que la liste entreprise (`listFolderId` identique). Un **dossier mixte** companies + contacts est OK.
 - **Dynamique** par défaut (`processingType: DYNAMIC`). Statique (`SNAPSHOT`/`MANUAL`) seulement si l'utilisateur précise.
 
@@ -148,10 +148,10 @@ l'association contact↔société dans le portail.
 
 | Contact | ← Company | Volume obtenu |
 |---|---|---|
-| Main list Casinos 2026+ | la company jumelle | 1 |
-| Main list Restaurants 2026+ | la company jumelle | 0 |
-| Main list Hotels 2026+ | la company jumelle | 1 |
-| Main list Hospitality 2026+ | la company jumelle | 33 |
+| Main list Insurance 2026+ | la company jumelle | 1 |
+| Main list Retail 2026+ | la company jumelle | 0 |
+| Main list Logistics 2026+ | la company jumelle | 1 |
+| Main list Software 2026+ | la company jumelle | 12 |
 
 Pattern validé. Pour le déroulé en volume (autres secteurs, listes « tout secteur » sans filtre date) : même recette, nouveaux dossiers propres.
 

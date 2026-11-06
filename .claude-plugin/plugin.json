@@ -1,10 +1,11 @@
 {
   "name": "hubspot-crm-toolkit",
   "description": "Boîte à outils HubSpot CRM pour agences — auditer, diagnostiquer et piloter un portail HubSpot au MOINDRE coût de tokens, en déléguant au cerveau le moins cher (Breeze, l'IA native de HubSpot) avant de tout faire soi-même. Bâtie sur un principe d'arbitrage de tokens.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": {
     "name": "Florent Maisoncelle"
   },
   "homepage": "https://github.com/Gremelinn0/sales-hubspot-toolkit",
-  "repository": "https://github.com/Gremelinn0/sales-hubspot-toolkit"
+  "repository": "https://github.com/Gremelinn0/sales-hubspot-toolkit",
+  "license": "MIT"
 }

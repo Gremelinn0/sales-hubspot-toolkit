@@ -82,8 +82,8 @@ Après doc Notion lue :
 
 **Avant de créer une nouvelle liste/segment** :
 
-1. **Naming convention** : s'inspirer des noms existants similaires. Si "Main list Hospitality 1" existe → nouvelle = "Main list Hospitality 2026+" (PAS "Nouveaux comptes Hospitality 2026+" en variation gratuite). Garde le préfixe / format métier établi.
-2. **Langue** : si listes existantes sont en français ("Hôtellerie", "Casinos") → naming français. Si anglais ("Main list Hospitality") → anglais. PAS mélanger.
+1. **Naming convention** : s'inspirer des noms existants similaires. Si "Main list Software 1" existe → nouvelle = "Main list Software 2026+" (PAS "Nouveaux comptes Software 2026+" en variation gratuite). Garde le préfixe / format métier établi.
+2. **Langue** : si listes existantes sont en français ("Logiciel", "Insurance") → naming français. Si anglais ("Main list Software") → anglais. PAS mélanger.
 3. **Folder destination** : suivre la **logique métier**, pas la facilité technique. Vérifier où sont placées les listes du même type métier (ex : Main lists prospection → folder "Clients" même si sources d'inspiration sont dans "Cibles"). La décision métier prime sur le folder technique de la source clonée.
 4. **Vérifier folder réel des listes existantes via UI** (breadcrumb), pas supposer
 
