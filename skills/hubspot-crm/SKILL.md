@@ -419,7 +419,7 @@ search_crm_objects(objectType="contacts", filters=[{"propertyName":"hs_analytics
 | Repo | Usage | Quand |
 |------|-------|-------|
 | [`hubspot/hubspot-cli`](https://github.com/HubSpot/hubspot-cli) | Déployer themes/modules/serverless depuis local via `hs watch` | Dev de modules custom, CI/CD, serverless functions |
-| [`hubspot/sample-apps-nodejs`](https://github.com/HubSpot/sample-apps-nodejs) | Exemples complets OAuth2, webhooks, rate limits avec `@hubspot/api-client` | Base de code pour toute intégration Node.js → voir skill `revops-api-scripts` |
+| [`hubspot/sample-apps-nodejs`](https://github.com/HubSpot/sample-apps-nodejs) | Exemples complets OAuth2, webhooks, rate limits avec `@hubspot/api-client` | Base de code pour toute intégration Node.js → pour tes propres scripts d'API |
 | [`fivetran/dbt_hubspot`](https://github.com/fivetran/dbt_hubspot) | Modèles SQL pré-écrits pour transformer données brutes HubSpot → tables BI propres | Quand HubSpot data part dans BigQuery/Snowflake |
 
 **CLI install :** `npm install -g @hubspot/cli` → `hs auth` → `hs watch <local> <hubspot>`

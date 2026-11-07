@@ -172,4 +172,4 @@ Pattern validé. Pour le déroulé en volume (autres secteurs, listes « tout se
 **<Client>** → `memory/clients/<client-slug>/segments-et-campagnes.md` = modèle entreprise→contact, référentiel géographique (propriété + options + remplissage mesuré), cartographie complète des segments par dossier, gouvernance. **Lire ce doc avant tout travail segments/campagnes sur ce client.** (Charger aussi `listes-inventory.md` + `crm-state.md`.)
 
 ## Skills liés
-`hubspot-create-list` (flow UI générique, à éviter sur ce portail car fige), `hubspot-crm` (règles CRM globales), `revops-api-scripts` (scripts API), `revops-data-model` (propriétés).
+`hubspot-create-list` (flow UI générique, à éviter sur ce portail car fige), `hubspot-crm` (règles CRM globales), tes scripts d'API et ton modèle de données (propriétés).

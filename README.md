@@ -6,7 +6,7 @@ Sa particularité : elle est bâtie sur un principe d'**arbitrage de tokens**. A
 
 ## Le principe — déléguer au cerveau le moins cher
 
-Le **chapeau** qui choisit le cerveau le moins coûteux devant une recherche ou un diagnostic, `claude-ia-delegation`, vit dans son propre pack : [productivity-claude-gpt-bridge](https://github.com/Gremelinn0/productivity-claude-gpt-bridge). Installe-le aussi si tu veux qu'il choisisse seul ; ce pack-ci en porte la branche HubSpot.
+Le **chapeau** qui choisit le cerveau le moins coûteux devant une recherche ou un diagnostic, `claude-ia-delegation`, vit dans son propre pack, `deleguer-entre-ia`. Installe-le aussi si tu veux qu'il choisisse seul ; ce pack-ci en porte la branche HubSpot.
 
 - Contexte HubSpot → **Breeze** (l'IA du portail, crédits gratuits) ou un audit écran-par-écran.
 - Recherche générale → GPT / Gemini (crédits déjà payés).
@@ -99,4 +99,4 @@ Un CRM cache sa vérité sur plusieurs écrans, et beaucoup de plateformes expos
 
 ---
 
-*Auteur : Florent Maisoncelle. Compétences extraites d'un usage réel en agence sur des portails HubSpot clients.*
+*Compétences extraites d'un usage réel en agence sur des portails HubSpot clients.*

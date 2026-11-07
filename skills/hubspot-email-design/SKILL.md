@@ -163,6 +163,6 @@ Puis **héberger au File Manager** (§3) comme toute image, et référencer en `
 - Vérifier **From name / From address** (ex le nom affiché de ton compte / `...@hubspotemail.net`) + **Subject line**.
 
 ## §5 Chaînage
-- Email codé créé → **repointer/brancher** dans le workflow d'automation (ne pas recréer le workflow si un existant fait le job — cf `revops-workflows`).
+- Email codé créé → **repointer/brancher** dans le workflow d'automation (ne pas recréer le workflow si un existant fait le job — cf la conception de tes workflows).
 - Boutons de l'email → cibles (landing page, form → ticket) : voir `hubspot-crm` / forms.
 - Toujours le **gate consentement** (en tête de ce fichier) avant toute mutation en production.
