@@ -42,7 +42,7 @@ Quand on arrive sur un compte CRM (ou qu'on veut « voir clair »), on **cartogr
 
 L'**API est LA base** : rapide, complète, déterministe (tous les segments + filtres + santé en une passe). L'**IA HubSpot (Breeze)** = aller segment par segment dans l'UI lui demander l'analyse → **lent + manuel + non scalable** → on la garde en **complément** (générer des descriptions, du narratif), pas pour l'aspiration de masse.
 
-**Endpoints** (Private App token, scope `crm.lists.read` [+ `crm.objects.*.read` pour les vérifs de volume]) :
+**Endpoints** (jeton API : clé de service ou app privée existante, scope `crm.lists.read` [+ `crm.objects.*.read` pour les vérifs de volume]) :
 - `POST /crm/v3/lists/search` `{count, offset}` → tous les segments (paginer via `hasMore`/`offset`). `additionalProperties` : `hs_folder_name`, `hs_list_size`, `hs_list_reference_count`.
 - `GET /crm/v3/lists/{id}?includeFilters=true` → `filterBranch` + `processingType` (DYNAMIC/SNAPSHOT/MANUAL).
 
@@ -101,12 +101,12 @@ with open("<path>/_segments-dump.local","w",encoding="utf-8") as fo:
 ## §3 Flags santé (le « bilan »)
 
 - **VIDE** (size 0) · **STATIQUE** (`SNAPSHOT`/`MANUAL` = figé) · **used=0** (pas de ref workflow/email/ad/report) · **DUP-NOM**.
-- 🔴 **Références inter-segments** : un filtre `filterType: IN_LIST` (« est membre de la liste X ») fait qu'un segment **dépend d'un autre**. → **`used=0` ne garantit PAS qu'un segment est libre** → on **ARCHIVE, jamais supprime** (CLAUDE.md agence). Détecter : chercher `IN_LIST` / `listId` dans les `filterBranch`.
+- 🔴 **Références inter-segments** : un filtre `filterType: IN_LIST` (« est membre de la liste X ») fait qu'un segment **dépend d'un autre**. → **`used=0` ne garantit PAS qu'un segment est libre** → on **ARCHIVE, jamais supprime** (règle du pack : une suppression peut casser le filtre d'un autre segment). Détecter : chercher `IN_LIST` / `listId` dans les `filterBranch`.
 - Filtre rendu `(membership/import — non rendu)` = filtre d'appartenance/source-import que l'export API ne détaille pas → vérifier dans l'UI si besoin, **pas cassé**.
 
 ## §4 Le doc d'audit (livrable type)
 
-Structure (cf `segments-audit-cartographie.md` <Client>) : **(1)** vue d'ensemble par familles métier · **(2)** 🩺 bilan santé (mal-paramétré / vide / statique / inutile / doublon) · **(3)** segments importants · **(4)** cartographie complète par dossier (avec filtre + flags) · **(5)** cible/recommandations · **(6)** méthode. → **collable dans un projet HubSpot pour Breeze** (contexte IA).
+Structure type (un fichier `segments-audit-cartographie.md` par client) : **(1)** vue d'ensemble par familles métier · **(2)** 🩺 bilan santé (mal-paramétré / vide / statique / inutile / doublon) · **(3)** segments importants · **(4)** cartographie complète par dossier (avec filtre + flags) · **(5)** cible/recommandations · **(6)** méthode. → **collable dans un projet HubSpot pour Breeze** (contexte IA).
 
 **Rigueur** : ne jamais conclure « mal paramétré » sur un simple indice (taille…) → **inspecter le `filterBranch` réel** avant d'affirmer (cas <Client> : fausse alerte « Clients - X » corrigée après inspection).
 
@@ -114,10 +114,10 @@ Structure (cf `segments-audit-cartographie.md` <Client>) : **(1)** vue d'ensembl
 Utile pour : **générer des descriptions** de segments (bouton « Generate description with AI » — **UI only, pas d'API**), narratif. Pas pour l'aspiration de masse (l'API §1-2 fait ça mieux).
 
 ## §6 Prérequis
-Private App token (`crm.lists.read` + `crm.objects.contacts/companies.read`), stocké gitignored (`*.local`). Cf `hubspot-marketing-segments` §2 pour la création du token.
+Jeton API (clé de service ou app privée existante : `crm.lists.read` + `crm.objects.contacts/companies.read`), stocké gitignored (`*.local`). Voir le README du pack pour la création de l'accès.
 
 ## §7 Cas inaugural — <Client> (2026-06-13)
 Tous les segments cartographiés + audités via ce flow → `memory/clients/<client-slug>/segments-audit-cartographie.md` (dump : `_segments-dump.local`). Findings : familles métier, « Clients - X » bien construits (après inspection), des imports statiques à archiver, références inter-segments (→ ne pas supprimer).
 
 ## Skills liés
-`hubspot-marketing-segments` (créer les listes contacts) · `crm-investigation-output` (format de rendu) · tes scripts d'API · `hubspot-crm` (règles CRM) · `claude-breeze` (le jumeau UI-first / Breeze — quand une fonctionnalité liée aux segments n'a pas d'API propre à aspirer, ou pour déléguer un diagnostic à Breeze).
+`hubspot-marketing-segments` (créer les listes contacts) · `crm-investigation-output` (format de rendu) · `hubspot-crm` (règles CRM) · `claude-breeze` (le jumeau UI-first / Breeze — quand une fonctionnalité liée aux segments n'a pas d'API propre à aspirer, ou pour déléguer un diagnostic à Breeze).

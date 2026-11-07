@@ -208,9 +208,9 @@ Update §15 changelog :
 
 Append entry sous date courante.
 
-### Update CLAUDE.md client si snapshot listes change
+### Mettre à jour le résumé du client si le snapshot des listes change
 
-Si listes critiques (top 8) changées → maj snapshot dans `CLAUDE.md` client §2.
+Si listes critiques (top 8) changées → maj du résumé des listes dans la fiche du client.
 
 ---
 
@@ -289,7 +289,7 @@ Body :
 }
 ```
 
-Auth : Private App token dans `.claude/settings.json` (déjà présent pour HubSpot MCP).
+Auth : jeton API (clé de service ou app privée existante) dans ton fichier de secrets gitignored.
 
 **Migration future** : remplacer §2 workflow UI par appel API direct via fetch dans script Node/Python invoqué par skill. ~10x plus rapide + déterministe.
 
@@ -297,7 +297,7 @@ Auth : Private App token dans `.claude/settings.json` (déjà présent pour HubS
 
 ## §8bis — Méthode API PROUVÉE + patterns appris (session 2026-06-15)
 
-L'**API v3 Lists est LA méthode** (l'UI auto fige le builder ~45s/interaction). Endpoints : créer `POST /crm/v3/lists` · **modifier le filtre** `PUT /crm/v3/lists/{id}/update-list-filters {filterBranch}` · renommer `PUT …/update-list-name?listName=` · déplacer `PUT …/folders/move-list {listId,newFolderId}` · créer dossier `POST …/folders {name,parentFolderId}` (⚠️ le `folderId` revient au **top-level** de la réponse). Token Private App dans `secrets.local`.
+L'**API v3 Lists est LA méthode** (l'UI auto fige le builder ~45s/interaction). Endpoints : créer `POST /crm/v3/lists` · **modifier le filtre** `PUT /crm/v3/lists/{id}/update-list-filters {filterBranch}` · renommer `PUT …/update-list-name?listName=` · déplacer `PUT …/folders/move-list {listId,newFolderId}` · créer dossier `POST …/folders {name,parentFolderId}` (⚠️ le `folderId` revient au **top-level** de la réponse). Jeton API (clé de service ou app privée existante) dans ton fichier de secrets gitignored.
 
 **Patterns de filtre (l'API refuse certaines formes au CREATE) :**
 - **Dates = points ABSOLUS** (`{year,month,day,…,timeType:"DATE"}` + `IS_AFTER`/`IS_BEFORE`). Une **plage relative** (`indexReference:YEAR`) est **refusée au CREATE** (seuls TODAY/NOW), et `upperBoundEndpointBehavior:EXCLUSIVE` refusé → INCLUSIVE. Le plus simple = `closedate IS_AFTER 2025-12-31` (pas de borne haute).
@@ -309,13 +309,13 @@ L'**API v3 Lists est LA méthode** (l'UI auto fige le builder ~45s/interaction).
 
 **Rangement** : dossier client = 2 sous-dossiers par OBJET (📇 Contacts newsletters / 🏢 Entreprises pilotage) ; briques techniques (pivot, mesures) dans « Z - Technique » hors du dossier client. **Le nom dit le critère.**
 
-Build complet de référence (filtres exacts + map des IDs) = `memory/clients/<client-slug>/segments-audit-cartographie.md` §5ter.
+Garde le build complet de référence (filtres exacts + map des IDs) dans le fichier d'audit des segments du client.
 
 ---
 
 ## §9 Anti-patterns
 
-- ❌ Créer sans validation explicite l'utilisateur (règle §1 projet)
+- ❌ Créer sans validation explicite de l'utilisateur (gate de consentement en tête de ce fichier)
 - ❌ Skip étape §0 (audit existant) → risque doublon
 - ❌ Naming inventé ("Nouveaux comptes X" au lieu de "Main list X")
 - ❌ Folder par défaut au lieu de logique métier

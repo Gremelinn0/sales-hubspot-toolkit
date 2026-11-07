@@ -142,18 +142,18 @@ CHROME="/c/Program Files/Google/Chrome/Application/chrome.exe"
 - `--virtual-time-budget` laisse le temps à la webfont de charger — **vérifier ensuite** que ce n'est pas le fallback (ouvrir le PNG, l'œil confirme le script).
 - **Trim** les bords transparents avec PIL (`im.getchannel('A').getbbox()` → `crop`) + garder ~8 px de marge, sinon le centrage est faux.
 
-Puis **héberger au File Manager** (§3) comme toute image, et référencer en `<img>` avec `width`/`height` explicites. Garde-fou : le SVG ne s'affiche pas en email (cf skill `hubspot-crm` / §12 du doc client) → tout vectoriel décoratif passe par ce pipeline.
+Puis **héberger au File Manager** (§3) comme toute image, et référencer en `<img>` avec `width`/`height` explicites. Garde-fou : le SVG ne s'affiche pas en email (les clients mail n'affichent pas le SVG) → tout vectoriel décoratif passe par ce pipeline.
 
 ## §3 Images — File Manager + URL
-1. Uploader dans un **dossier dédié client** du File Manager (cf règle agence « 1 dossier File Manager par client »).
+1. Uploader dans un **dossier dédié client** du File Manager (un dossier File Manager par client, avec des sous-dossiers propres).
 2. URL publique — pattern : `https://{portalId}.fs1.hubspotusercontent-na1.net/hubfs/{portalId}/{Dossier}/{fichier}` (ex : `.../hubfs/<portal-id>/<TonDossier>/TrustPilot/1-logo.png` — **attention au sous-dossier parent** `<TonDossier>/`, celui sous lequel tu ranges tes fichiers dans le File Manager).
 3. ⚠️ **Redaction** : les URLs File Manager sont **masquées dans les retours d'outils Claude** (filtre sécu) — lecture JS, presse-papier, screenshot du panneau : tout bloqué. → **demander au responsable du compte** (⋮ → *Copy file URL* → colle) OU **construire** avec le pattern ci-dessus. Ne pas s'acharner à les lire en auto.
 
 ## §4 Anti-galères Chrome MCP sur HubSpot
 - **Éditeurs email drag-drop + form builder** = **iframes cross-origin** (`hubspotpreview`) → screenshots **gèlent**, JS du canvas inaccessible → **impilotables en auto**. D'où le coded email + les forms via clone/legacy.
 - **Boutons d'action React** : les clics MCP (ref/coord) **passent souvent pas** → utiliser **`javascript_tool` + `.click()`** (fiable).
-- **"Upload files"** ouvre un **native picker** qui **gèle le renderer** ; `file_upload` refuse les chemins disque → faire **glisser par l'utilisateur** sur la zone drop, ou **ouvrir la bonne page** et le laisser déposer (règle « ouvre la page cible »).
-- **Preview** : rendre l'email en local (`python -m http.server --bind 127.0.0.1` + Chrome, ou `explorer.exe fichier.html`) et **l'ouvrir soi-même** dans le navigateur (règle « montrer = ouvrir »).
+- **"Upload files"** ouvre un **native picker** qui **gèle le renderer** ; `file_upload` refuse les chemins disque → faire **glisser par l'utilisateur** sur la zone drop, ou **ouvrir la bonne page** et le laisser déposer (donner le lien de la page cible).
+- **Preview** : rendre l'email en local (`python -m http.server --bind 127.0.0.1` + Chrome, ou `explorer.exe fichier.html`) et **l'ouvrir soi-même** dans le navigateur (montrer le rendu plutôt que le décrire).
 
 ## §4bis Import réussi + réglages obligatoires (send-options)
 **Ce qui MARCHE (prouvé 2026-07-06)** : *Create email → Automated → template gallery → "Upload design" → **glisser le fichier HTML clean** (email-safe, PAS le `.dc.html`) → "Generate design"* → l'IA convertit en email drag-drop **fidèle** (logo + images OK). Le collage "Paste the HTML" est dans un iframe → **impilotable en auto** ; faire **glisser le fichier** par l'utilisateur (flow qu'il maîtrise) est le plus fiable.
@@ -163,6 +163,6 @@ Puis **héberger au File Manager** (§3) comme toute image, et référencer en `
 - Vérifier **From name / From address** (ex le nom affiché de ton compte / `...@hubspotemail.net`) + **Subject line**.
 
 ## §5 Chaînage
-- Email codé créé → **repointer/brancher** dans le workflow d'automation (ne pas recréer le workflow si un existant fait le job — cf la conception de tes workflows).
+- Email codé créé → **repointer/brancher** dans le workflow d'automation (ne pas recréer le workflow si un existant fait le job — voir `hubspot-workflows-audit` pour repérer l'existant).
 - Boutons de l'email → cibles (landing page, form → ticket) : voir `hubspot-crm` / forms.
 - Toujours le **gate consentement** (en tête de ce fichier) avant toute mutation en production.

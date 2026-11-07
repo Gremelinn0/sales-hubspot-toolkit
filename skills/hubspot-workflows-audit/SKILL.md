@@ -60,7 +60,7 @@ L'**API est LA base** pour la structure : rapide, complète, déterministe (tous
 - **le CRÉATEUR** du workflow (colonne « Créé par » — capital pour dire « l'ancien prestataire a fait le cœur métier, l'agence la plomberie »),
 - **les VOLUMES d'enrôlés** (total + récent — capital pour dire ce qui tourne vraiment vs ce qui dort).
 
-**Endpoints** (Private App token, scope `automation` — cf `hubspot-crm` / `secrets.local`) :
+**Endpoints** (jeton API, scope `automation` — cf `hubspot-crm` et ton fichier de secrets gitignored) :
 - `GET /automation/v4/flows?limit=100&after=…` → **liste** tous les flows (résumé : `id`, `name`, `isEnabled`, `objectTypeId`). Paginer via `paging.next.after`.
 - `GET /automation/v4/flows/{flowId}` → **définition complète** : `actions[]` (avec leur `type`) + `enrollmentCriteria` (le déclencheur).
 
@@ -68,7 +68,7 @@ L'**API est LA base** pour la structure : rapide, complète, déterministe (tous
 
 ## §2 Script réutilisable (pull définitions + profil d'actions + flags → dump UTF-8)
 
-> ⚠️ Windows : écrire la sortie dans un **fichier UTF-8** (pas `print` → crash cp1252 sur accents/emoji). Token depuis un fichier gitignored (`secrets.local`, cf `hubspot-marketing-segments` §2). Laisse **volontairement vides** les colonnes `Créateur` et `Enrôlés` : elles se remplissent depuis l'UI (§3) — l'API ne les a pas.
+> ⚠️ Windows : écrire la sortie dans un **fichier UTF-8** (pas `print` → crash cp1252 sur accents/emoji). Jeton lu depuis un fichier gitignored (`<chemin-vers-ton-fichier-de-secrets>`, cf `hubspot-marketing-segments` §2). Laisse **volontairement vides** les colonnes `Créateur` et `Enrôlés` : elles se remplissent depuis l'UI (§3) — l'API ne les a pas.
 
 ```python
 import json,urllib.request,urllib.error
@@ -211,7 +211,7 @@ flowchart TB
     BACK -.->|"il rachete"| BUY
 ```
 
-Un nœud en `alerte` (rouge) signale un workflow **en souffrance** — volume effondré, filtre devenu trop étroit, audience majoritairement inatteignable. Mettre la raison dans le nœud (`⚠️ 89% anonymes`) : c'est ce qui transforme une carte en diagnostic.
+Un nœud en `alerte` (rouge) signale un workflow **en souffrance** — volume effondré, filtre devenu trop étroit, audience majoritairement inatteignable. Mettre la raison dans le nœud (`⚠️ <N>% anonymes`) : c'est ce qui transforme une carte en diagnostic.
 
 ### §5ter Le 3ᵉ diagramme — RELATIONS & COUVERTURE
 
@@ -237,12 +237,13 @@ flowchart LR
 
 ⚠️ **Éviter `stroke-dasharray` dans les `classDef`** — certains renderers le refusent et cassent tout le bloc en silence. Contraster par `fill` + `stroke-width`, c'est portable partout. Même prudence sur les accents : les garder hors des libellés de nœuds évite les surprises d'un renderer à l'autre.
 
-**Où poser le livrable** : la carte se rend sur une **page Notion** dans le hub du client (bloc `mermaid`) ; le doc technique miroir reste dans `memory/clients/<slug>/audit-workflows.md` (§32 global : la connaissance = la source, versionnée). Produire les 3 diagrammes dans ce meme fichier, sous une section « Cartes par SCENARIO ».
+**Où poser le livrable** : la carte se rend sur une **page Notion** dans le hub du client (bloc `mermaid`) ; le doc technique miroir reste dans `memory/clients/<slug>/audit-workflows.md` (la connaissance reste dans un fichier versionné, la page Notion n'en est que la vue). Produire les 3 diagrammes dans ce meme fichier, sous une section « Cartes par SCENARIO ».
 
 ## §6 Prérequis + garde-fou read-only
 
-- **Token** Private App (scope `automation`), gitignored (`secrets.local`). Le bon token full-access sur <Client> = app `get-schemas` (celui que tu as créé avec les scopes listés dans le README), pas un token limité.
+- **Jeton API** (clé de service ou app privée existante, scope `automation`), gitignored (`<chemin-vers-ton-fichier-de-secrets>`). Prends celui qui porte tous les scopes listés dans le README, pas un jeton limité.
 - **🔒 Read-only par défaut.** Cet audit **lit**, il ne modifie **aucun** workflow live. Toute modification d'un workflow existant (activer, éditer, archiver-renommer) = **objet live** → **validation l'utilisateur AVANT de toucher** (**gate consentement** en tête de ce fichier). Créer un doc/une carte à côté = autonome ; toucher un flow = on demande.
+- **Avant toute édition : sauvegarder la définition.** `GET /automation/v4/flows/{id}` et ranger le JSON obtenu dans un dépôt privé et versionné (il contient des noms de propriétés, des identifiants de listes et des textes de notification : à traiter comme de la configuration sensible). Le `PUT` ci-dessous exige le corps complet : une erreur écrase la définition, et cette copie est le seul retour arrière propre. Pour revenir en arrière, recréer le workflow comme un **nouveau** flow désactivé, à relire avant de l'activer, plutôt que d'écraser l'existant.
 - **Si un jour on ÉDITE** (avec go) : `PUT /automation/v4/flows/{id}` exige le **body COMPLET** (`isEnabled`, `revisionId`, `type` — sinon 400) ; objet `0-1` → `type: CONTACT_FLOW` (`PLATFORM_FLOW` refusé).
 
 ## §7 Cas inaugural — <Client> (2026-07-21)
@@ -252,4 +253,4 @@ Portail `<portal-id>` : **tous les flows cartographiés, actifs et éteints** vi
 **Suite 2026-07-28 — d'où viennent §5bis et §5ter.** Le même portail a servi de banc d'essai à l'axe scénario : les workflows lifecycle rangés par objectif puis par déclencheur (quelques workflows de fidélisation ambigus, d'où la règle des 2 variantes). Le diagramme relations y a révélé ce que les tables cachaient : **une bonne partie des workflows partagent le même pool d'enrôlement** (risque de double sollicitation prouvé sur un cas réel), une chaîne de seuils sur le compteur de commandes, et **deux trous de couverture** (le visiteur anonyme, très majoritaire dans le trafic panier, et l'absence totale de mesure du revenu par workflow).
 
 ## Skills liés
-`hubspot-segments-audit` (le jumeau, pour les segments) · tes scripts d'API (scripter l'API HubSpot) · `crm-investigation-output` (format de rendu) · `hubspot-crm` (règles CRM + token) · `claude-breeze` (le jumeau UI-first — déléguer le diagnostic à Breeze en tokens gratuits, OU auditer écran par écran une fonctionnalité sans API de dump).
+`hubspot-segments-audit` (le jumeau, pour les segments) · `crm-investigation-output` (format de rendu) · `hubspot-crm` (règles CRM + token) · `claude-breeze` (le jumeau UI-first — déléguer le diagnostic à Breeze en tokens gratuits, OU auditer écran par écran une fonctionnalité sans API de dump).

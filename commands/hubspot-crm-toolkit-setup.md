@@ -1,5 +1,5 @@
 ---
-description: Vérifie que le toolkit HubSpot peut réellement fonctionner ici (token, scopes, navigateur), aide à créer la Private App qui manque, et explique quand chaque compétence se déclenche.
+description: Vérifie que le toolkit HubSpot peut réellement fonctionner ici (token, scopes, navigateur), aide à créer l'accès API qui manque (clé de service), et explique quand chaque compétence se déclenche.
 argument-hint: "[--uninstall]"
 ---
 
@@ -17,11 +17,12 @@ Tu exécutes le setup de ce pack. Trois fonctions, **dans cet ordre** : VÉRIFIE
 ## Si l'argument est `--uninstall`
 
 Ce pack n'écrit **rien** chez l'utilisateur : ni fichier, ni configuration, ni dossier. Le seul
-artefact **qu'il a pu lui faire créer**, c'est une **Private App dans son portail HubSpot** — elle est
-chez lui, sous son contrôle, et lui seul peut la supprimer (Paramètres → Intégrations → Applications
-privées).
+artefact **qu'il a pu lui faire créer**, c'est un **accès API dans son portail HubSpot** (une clé de
+service, ou une ancienne application privée) : il est chez lui, sous son contrôle, et lui seul peut le
+supprimer (clés de service : section Développement → Clés ; anciennes apps : Paramètres →
+Intégrations → Applications privées).
 
-Dis-le, rappelle-lui cette app comme seule trace à nettoyer s'il le souhaite, et **ne cherche aucun
+Dis-le, rappelle-lui cet accès comme seule trace à nettoyer s'il le souhaite, et **ne cherche aucun
 fichier local** : en inventer laisserait croire que le pack en avait posé.
 
 ## 1 — VÉRIFIER
@@ -29,17 +30,18 @@ fichier local** : en inventer laisserait croire que le pack en avait posé.
 **a) Quelles compétences sont là ?** Liste `skills/` dans le répertoire du plugin. Le résultat est le
 verdict — ne recopie pas une liste depuis ce fichier, elle mentirait le jour où le pack changera.
 
-**b) Le contrôle du navigateur.** **5 compétences sur 9** en dépendent (Breeze, création de listes,
-design d'emails, segments marketing, audit de workflows) : elles lisent et pilotent des écrans.
+**b) Le contrôle du navigateur.** **7 compétences sur 10** en dépendent (Breeze, création de listes,
+design d'emails, segments marketing, audit de workflows, Agent Hub, Buyer Intent) : elles lisent et
+pilotent des écrans.
 Sonde-le vraiment — tente de lister les onglets ouverts.
 
 | Observation | Verdict |
 |---|---|
-| Les outils de navigateur n'existent pas ici | ❌ Ces 5 compétences ne pourront rien faire |
+| Les outils de navigateur n'existent pas ici | ❌ Ces 7 compétences ne pourront rien faire |
 | Ils existent, aucune connexion | ⚠️ Extension présente mais pas branchée |
 | Tu obtiens la liste des onglets | ✅ La seule preuve qui vaille |
 
-**c) Le token Private App.** **4 compétences** en dépendent (création de listes, segments marketing,
+**c) Le jeton API (clé de service, ou ancienne app privée).** **4 compétences** en dépendent (création de listes, segments marketing,
 audit de segments, audit de workflows). **Demande à l'utilisateur où il range son token** — ce pack ne
 présume aucun emplacement, et ne lui demande jamais de le coller dans le fil.
 
@@ -56,7 +58,8 @@ c'est infiniment plus utile que de lui faire relire une case à cocher.
 
 Rien à installer côté machine. Ce que tu peux réellement faire :
 
-- **Pas de Private App** → guide-le : Paramètres → Intégrations → Applications privées → Créer, avec
+- **Pas d'accès API** → guide-le : la création d'applications privées est fermée depuis le
+  26/10/2026 sur les comptes existants, donc une clé de service (section Développement → Clés), avec
   l'union des scopes du pack (le README les liste en un bloc, précisément pour éviter d'y revenir
   compétence par compétence). **C'est son geste, dans son portail** — tu ne crées rien à sa place.
 - **Scopes incomplets** → nomme ceux qui manquent, d'après les 403 observés, pas d'après une supposition.
@@ -78,7 +81,7 @@ communes.
 
 **Pourquoi ça n'a rien fait.** Par ordre de fréquence :
 1. **Token absent ou scope manquant** → les appels API échouent en 401/403.
-2. **Navigateur non connecté** → les 5 compétences d'écran n'ont aucune main.
+2. **Navigateur non connecté** → les 7 compétences d'écran n'ont aucune main.
 3. **Une action d'écriture attend ton « oui »** — c'est **voulu** : le gate de consentement bloque
    toute création/modification/suppression tant que tu n'as pas validé le plan. Ce n'est pas une
    panne, c'est le garde-fou qui fait son travail.
@@ -88,8 +91,8 @@ communes.
 
 ```
 Compétences          : <n> trouvée(s) — <noms>
-Navigateur           : ✅ (<n> onglets) | ⚠️ non connecté | ❌ absent   → impacte 5 compétences
-Token Private App    : ✅ valide | ⚠️ scopes incomplets (<lesquels>) | ❌ absent | non vérifiable
+Navigateur           : ✅ (<n> onglets) | ⚠️ non connecté | ❌ absent   → impacte 7 compétences
+Jeton API            : ✅ valide | ⚠️ scopes incomplets (<lesquels>) | ❌ absent | non vérifiable
 Portail cible        : <fourni par toi> | non renseigné
 Écrit sur la machine : rien
 ```

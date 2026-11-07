@@ -1,6 +1,6 @@
 ---
 name: hubspot-marketing-segments
-description: Construit des listes/segments de CONTACTS HubSpot pour newsletters / emails marketing à partir d'un ciblage entreprise (secteur, liste company). Applique la recette « email marketing = contacts only » → miroir des filtres sur la SOCIÉTÉ ASSOCIÉE + Email known + Marketing contact status. Création via API v3 Lists + Private App token (le MCP ne sait pas créer de listes, l'UI en auto fige HubSpot). Triggers "liste contacts pour newsletter", "segment marketing", "newsletter au secteur X", "convertir liste entreprise en liste contact", "miroir contact d'une liste company", "audience marketing".
+description: Construit des listes/segments de CONTACTS HubSpot pour newsletters / emails marketing à partir d'un ciblage entreprise (secteur, liste company). Applique la recette « email marketing = contacts only » → miroir des filtres sur la SOCIÉTÉ ASSOCIÉE + Email known + Marketing contact status. Création via API v3 Lists + jeton API (clé de service ou app privée existante) (le MCP ne sait pas créer de listes, l'UI en auto fige HubSpot). Triggers "liste contacts pour newsletter", "segment marketing", "newsletter au secteur X", "convertir liste entreprise en liste contact", "miroir contact d'une liste company", "audience marketing".
 ---
 
 ## ⛔ GATE CONSENTEMENT — avant toute action qui MODIFIE le portail
@@ -54,18 +54,18 @@ Pour chaque liste **entreprise** source → 1 segment **contact** miroir :
 | *(ajout systématique)* | `Contact > Email is known` |
 | *(ajout systématique)* | `Contact > Marketing contact status is any of Marketing contact` |
 
-Type = **Active (dynamique)** par défaut (cf CLAUDE.md projet — statique seulement si l'utilisateur précise). Les 2 garde-fous contact garantissent l'éligibilité à l'envoi marketing.
+Type = **Active (dynamique)** par défaut (statique seulement si l'utilisateur précise). Les 2 garde-fous contact garantissent l'éligibilité à l'envoi marketing.
 
 ---
 
-## §2 Méthode de création = API v3 Lists + Private App token
+## §2 Méthode de création = API v3 Lists + jeton API (clé de service ou app privée existante)
 
 **Le MCP HubSpot NE crée PAS de listes** (`OBJECT_LIST write = NOT_AVAILABLE`, aucun outil de création) — reconnecter le MCP n'y change rien. **L'automation de l'UI** (Chrome MCP) **fige HubSpot ~45s par interaction** (builder de segments très lourd) → inexploitable.
 
-→ **Voie unique fiable : API v3 Lists avec un Private App token.**
+→ **Voie unique fiable : API v3 Lists avec un jeton API.**
 
 - Endpoint : `POST https://api.hubapi.com/crm/v3/lists` (header `Authorization: Bearer <token>`).
-- Token = Private App (Réglages → Intégrations → Private Apps), scopes `crm.lists.read` + `crm.lists.write` (+ `crm.objects.contacts.read` / `crm.objects.companies.read` pour vérifs). Stocké en **fichier gitignored** (`*.local` ou `.env`), JAMAIS commité, JAMAIS réaffiché.
+- Jeton = clé de service, ou app privée déjà existante (voir le README du pack pour la création), scopes `crm.lists.read` + `crm.lists.write` (+ `crm.objects.contacts.read` / `crm.objects.companies.read` pour vérifs). Stocké en **fichier gitignored** (`*.local` ou `.env`), JAMAIS commité, JAMAIS réaffiché.
 - Lire une liste existante : `GET /crm/v3/lists/{id}?includeFilters=true` (donne la syntaxe exacte des filtres + permet de copier un modèle).
 - Trouver le bon `listFolderId` : `GET /crm/v3/lists/folders` (arbre des dossiers) ou `POST /crm/v3/lists/search` (renvoie `hs_folder_name`).
 
@@ -110,7 +110,7 @@ Structure : `OR > AND { filtres contact + branche ASSOCIATION vers la société 
 
 ---
 
-## §4 Convention nommage / dossier (CLAUDE.md projet)
+## §4 Convention nommage / dossier (convention du pack)
 
 - **Même NOM** que la liste entreprise source (le type d'objet Contact vs Company suffit à distinguer). Ex : la liste contact s'appelle aussi `Main list Insurance 2026+`.
 - **Même DOSSIER** que la liste entreprise (`listFolderId` identique). Un **dossier mixte** companies + contacts est OK.
@@ -120,7 +120,7 @@ Structure : `OR > AND { filtres contact + branche ASSOCIATION vers la société 
 
 ## §5 Script réutilisable + workflow
 
-Modèle : `memory/clients/<client-slug>/create_lists.local` (Python, lit le token depuis `secrets.local`, builders de filtres, configs par secteur, POST + GET de vérif). Réutilisable pour de nouveaux secteurs : ajouter une entrée dans `SECTORS` (nom, `industry` interne, `name_contains` optionnel) puis `python create_lists.local <clé>`.
+Modèle à écrire une fois par client : un script Python qui lit le jeton depuis ton fichier de secrets gitignored, avec des builders de filtres, des configs par secteur, un POST puis un GET de vérification. Réutilisable pour de nouveaux secteurs : ajouter une entrée dans `SECTORS` (nom, `industry` interne, `name_contains` optionnel) puis lancer le script avec la clé du secteur.
 
 **Workflow** :
 1. Identifier la/les liste(s) entreprise source + lire ses filtres (`GET ...?includeFilters=true`).
@@ -133,9 +133,9 @@ Modèle : `memory/clients/<client-slug>/create_lists.local` (Python, lit le toke
 
 ## §6 Post-create (obligatoire)
 
-- `listes-inventory.md` du client : ajouter les listes (ID/nom/vol/miroir/URL) + ligne(s) §15 changelog. *(Règle absolue listes — CLAUDE.md projet)*.
+- `listes-inventory.md` du client : ajouter les listes (ID/nom/vol/miroir/URL) + ligne(s) §15 changelog.
 - `actions-log.md` : entrée datée.
-- Si la création change le snapshot du `CLAUDE.md` client → maj le pointeur.
+- Si la création change le résumé des listes dans la fiche du client → mets-le à jour.
 
 ---
 
@@ -148,10 +148,10 @@ l'association contact↔société dans le portail.
 
 | Contact | ← Company | Volume obtenu |
 |---|---|---|
-| Main list Insurance 2026+ | la company jumelle | 1 |
-| Main list Retail 2026+ | la company jumelle | 0 |
-| Main list Logistics 2026+ | la company jumelle | 1 |
-| Main list Software 2026+ | la company jumelle | 12 |
+| Main list Insurance 2026+ | la company jumelle | très faible |
+| Main list Retail 2026+ | la company jumelle | nul |
+| Main list Logistics 2026+ | la company jumelle | très faible |
+| Main list Software 2026+ | la company jumelle | le plus élevé des quatre, mais modeste |
 
 Pattern validé. Pour le déroulé en volume (autres secteurs, listes « tout secteur » sans filtre date) : même recette, nouveaux dossiers propres.
 
@@ -172,4 +172,4 @@ Pattern validé. Pour le déroulé en volume (autres secteurs, listes « tout se
 **<Client>** → `memory/clients/<client-slug>/segments-et-campagnes.md` = modèle entreprise→contact, référentiel géographique (propriété + options + remplissage mesuré), cartographie complète des segments par dossier, gouvernance. **Lire ce doc avant tout travail segments/campagnes sur ce client.** (Charger aussi `listes-inventory.md` + `crm-state.md`.)
 
 ## Skills liés
-`hubspot-create-list` (flow UI générique, à éviter sur ce portail car fige), `hubspot-crm` (règles CRM globales), tes scripts d'API et ton modèle de données (propriétés).
+`hubspot-create-list` (flow UI générique, à éviter sur ce portail car fige), `hubspot-crm` (règles CRM globales).

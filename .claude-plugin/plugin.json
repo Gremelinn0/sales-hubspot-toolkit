@@ -1,7 +1,7 @@
 {
   "name": "hubspot-crm-toolkit",
-  "description": "Boîte à outils HubSpot CRM pour agences — auditer, diagnostiquer et piloter un portail HubSpot au MOINDRE coût de tokens, en déléguant au cerveau le moins cher (Breeze, l'IA native de HubSpot) avant de tout faire soi-même. Bâtie sur un principe d'arbitrage de tokens.",
-  "version": "0.3.1",
+  "description": "Boîte à outils HubSpot CRM pour agences (10 compétences) : auditer, diagnostiquer et piloter un portail HubSpot au MOINDRE coût de tokens, en déléguant au cerveau le moins cher (Breeze, l'IA native de HubSpot) avant de tout faire soi-même. Couvre aussi l'Agent Hub (agents, coût, bêtas) et Buyer Intent (crédits, non-rétroactivité). Bâtie sur un principe d'arbitrage de tokens.",
+  "version": "0.4.0",
   "author": {
     "name": "Florent Maisoncelle"
   },

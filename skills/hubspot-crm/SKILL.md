@@ -219,9 +219,15 @@ Exemple de portail : **Sales Hub Pro + Marketing Hub Pro + Service Hub Starter**
 
 ---
 
-## §2 MCP HubSpot (accès programmatique)
+## §2 Accès programmatique : trois voies (état au 2026-11-07, à re-vérifier avant de s'y fier)
 
-Config dans `navigateur/.claude/settings.json` :
+- **Serveur MCP distant de HubSpot** (`https://mcp.hubspot.com`, [documentation](https://developers.hubspot.com/docs/build-with-ai/remote-mcp-server)) : connexion par OAuth gérée par l'outil d'IA, sans jeton ni scope à régler ; lecture et écriture sur contacts, entreprises, transactions, tickets et plus. La page de l'éditeur n'indique ni limites ni statut (bêta ou non). Voie à essayer en premier quand on n'a pas déjà un jeton.
+- **Clé de service** pour les scripts REST et le montage communautaire ci-dessous : l'éditeur a fermé la création de nouvelles applications privées legacy (28 septembre 2026 pour les comptes neufs, 26 octobre 2026 pour les comptes existants, [annonce](https://developers.hubspot.com/changelog/legacy-private-app-creation-sunset)) ; les apps existantes continuent de fonctionner. Il recommande les [clés de service](https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/account-service-keys) : accès par scopes, REST uniquement (ni webhooks ni extensions d'interface), fonctionnement annoncé comme évolutif.
+- **HubSpot Agent CLI** (bêta, [aide](https://knowledge.hubspot.com/integrations/use-the-hubspot-agent-cli)) : une ligne de commande qui connecte un agent de code au compte, avec les droits de l'utilisateur connecté ; un Super Admin contrôle qui peut s'y connecter ; certaines actions proposent un **aperçu à blanc**, à lancer avant toute écriture en masse (toujours sous le gate de consentement). Des compétences tierces existent pour cette CLI : voir le README du pack.
+
+### Montage communautaire (jeton), conservé pour mémoire
+
+Config dans la configuration MCP de ton client :
 ```json
 {
   "mcpServers": {
@@ -229,7 +235,7 @@ Config dans `navigateur/.claude/settings.json` :
       "command": "npx",
       "args": ["-y", "mcp-hubspot"],
       "env": {
-        "HUBSPOT_ACCESS_TOKEN": "<TOKEN_PRIVATE_APP>"
+        "HUBSPOT_ACCESS_TOKEN": "<JETON_API>"
       }
     }
   }
@@ -238,7 +244,7 @@ Config dans `navigateur/.claude/settings.json` :
 
 Portail actif : **`<portal-id>`** (le portail client sur lequel tu travailles)
 
-Scopes Private App requis :
+Scopes requis (app privée ou clé de service ; un 403 nomme le scope manquant) :
 - `crm.objects.contacts.read` / `.write`
 - `crm.objects.companies.read` / `.write`
 - `crm.objects.deals.read` / `.write`
@@ -419,7 +425,7 @@ search_crm_objects(objectType="contacts", filters=[{"propertyName":"hs_analytics
 | Repo | Usage | Quand |
 |------|-------|-------|
 | [`hubspot/hubspot-cli`](https://github.com/HubSpot/hubspot-cli) | Déployer themes/modules/serverless depuis local via `hs watch` | Dev de modules custom, CI/CD, serverless functions |
-| [`hubspot/sample-apps-nodejs`](https://github.com/HubSpot/sample-apps-nodejs) | Exemples complets OAuth2, webhooks, rate limits avec `@hubspot/api-client` | Base de code pour toute intégration Node.js → pour tes propres scripts d'API |
+| [`hubspot/sample-apps-nodejs`](https://github.com/HubSpot/sample-apps-nodejs) | Exemples complets OAuth2, webhooks, rate limits avec `@hubspot/api-client` | Base de code pour toute intégration Node.js |
 | [`fivetran/dbt_hubspot`](https://github.com/fivetran/dbt_hubspot) | Modèles SQL pré-écrits pour transformer données brutes HubSpot → tables BI propres | Quand HubSpot data part dans BigQuery/Snowflake |
 
 **CLI install :** `npm install -g @hubspot/cli` → `hs auth` → `hs watch <local> <hubspot>`
