@@ -248,7 +248,7 @@ Où c'est rangé (pour les futures sessions) : ton dossier `breeze-logs/` ; ton 
 
 ## §6 Cas inaugural — audit Buyer Intent sur un portail client réel (2026-07-22)
 
-Premier run du mode navigation (Chrome MCP, lecture seule) : 9 saved views + l'écran Configuration, portail <portal-id>. La règle d'or (§3) s'est vérifiée en direct — la vue par défaut (975 companies, tout à « Any ») laissait croire à un setup non discriminant ; l'écran Configuration a révélé la vraie racine : un *Intent Criteria* compte-large (5 chemins) et 6 *Target Markets* sectoriels précis existent mais ne sont câblés sur quasiment aucune vue. Sans traverser les écrans → conclusion fausse « pas de segmentation » au lieu de « segmentation prête mais pas branchée ». Doc : `memory/clients/<client-slug>/audit-buyer-intent.md`.
+Premier run du mode navigation (Chrome MCP, lecture seule) : les vues enregistrées + l'écran Configuration. La règle d'or (§3) s'est vérifiée en direct — la vue par défaut (tout à « Any ») laissait croire à un setup non discriminant ; l'écran Configuration a révélé la vraie racine : un *Intent Criteria* compte-large et des *Target Markets* sectoriels précis existent mais ne sont câblés sur quasiment aucune vue. Sans traverser les écrans → conclusion fausse « pas de segmentation » au lieu de « segmentation prête mais pas branchée ». Doc : `memory/clients/<client-slug>/audit-buyer-intent.md`.
 
 ## Skills liés
 

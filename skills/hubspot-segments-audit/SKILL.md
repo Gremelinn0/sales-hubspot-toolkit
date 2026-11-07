@@ -40,7 +40,7 @@ Quand on arrive sur un compte CRM (ou qu'on veut « voir clair »), on **cartogr
 
 ## §1 Méthode = API d'abord (les 2 options)
 
-L'**API est LA base** : rapide, complète, déterministe (ex. 78 segments + filtres + santé en une passe). L'**IA HubSpot (Breeze)** = aller segment par segment dans l'UI lui demander l'analyse → **lent + manuel + non scalable** → on la garde en **complément** (générer des descriptions, du narratif), pas pour l'aspiration de masse.
+L'**API est LA base** : rapide, complète, déterministe (tous les segments + filtres + santé en une passe). L'**IA HubSpot (Breeze)** = aller segment par segment dans l'UI lui demander l'analyse → **lent + manuel + non scalable** → on la garde en **complément** (générer des descriptions, du narratif), pas pour l'aspiration de masse.
 
 **Endpoints** (Private App token, scope `crm.lists.read` [+ `crm.objects.*.read` pour les vérifs de volume]) :
 - `POST /crm/v3/lists/search` `{count, offset}` → tous les segments (paginer via `hasMore`/`offset`). `additionalProperties` : `hs_folder_name`, `hs_list_size`, `hs_list_reference_count`.
@@ -117,7 +117,7 @@ Utile pour : **générer des descriptions** de segments (bouton « Generate desc
 Private App token (`crm.lists.read` + `crm.objects.contacts/companies.read`), stocké gitignored (`*.local`). Cf `hubspot-marketing-segments` §2 pour la création du token.
 
 ## §7 Cas inaugural — <Client> (2026-06-13)
-78 segments cartographiés + audités via ce flow → `memory/clients/<client-slug>/segments-audit-cartographie.md` (dump : `_segments-dump.local`). Findings : familles métier, « Clients - X » bien construits (après inspection), 6 imports statiques à archiver, références inter-segments (→ ne pas supprimer).
+Tous les segments cartographiés + audités via ce flow → `memory/clients/<client-slug>/segments-audit-cartographie.md` (dump : `_segments-dump.local`). Findings : familles métier, « Clients - X » bien construits (après inspection), des imports statiques à archiver, références inter-segments (→ ne pas supprimer).
 
 ## Skills liés
 `hubspot-marketing-segments` (créer les listes contacts) · `crm-investigation-output` (format de rendu) · `revops-api-scripts` (scripts API) · `hubspot-crm` (règles CRM) · `claude-breeze` (le jumeau UI-first / Breeze — quand une fonctionnalité liée aux segments n'a pas d'API propre à aspirer, ou pour déléguer un diagnostic à Breeze).

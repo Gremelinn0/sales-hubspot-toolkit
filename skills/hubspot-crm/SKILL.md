@@ -149,7 +149,7 @@ Ne jamais supposer le comportement CRM sans validation Breeze quand comportement
 
 ### Capacités Breeze confirmées (portail <portal-id>)
 
-Portail : **Sales Hub Pro + Marketing Hub Pro + Service Hub Starter** / Super Admin
+Exemple de portail : **Sales Hub Pro + Marketing Hub Pro + Service Hub Starter** / Super Admin
 
 | Domaine | Ce que Breeze peut faire |
 |---------|-------------------------|

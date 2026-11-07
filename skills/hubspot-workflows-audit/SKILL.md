@@ -55,9 +55,9 @@ Quand on arrive sur un compte CRM (ou qu'on veut « voir clair » sur ce qui tou
 
 ## §1 Méthode = API d'abord, MAIS elle a 2 angles morts
 
-L'**API est LA base** pour la structure : rapide, complète, déterministe (ex. 43 flows + leurs actions + déclencheurs en une passe). Mais elle **ne rend que la DÉFINITION** d'un flow. Deux choses qu'elle **ne donne JAMAIS** et qu'on va chercher dans l'UI (§3) :
+L'**API est LA base** pour la structure : rapide, complète, déterministe (tous les flows + leurs actions + déclencheurs en une passe). Mais elle **ne rend que la DÉFINITION** d'un flow. Deux choses qu'elle **ne donne JAMAIS** et qu'on va chercher dans l'UI (§3) :
 
-- **le CRÉATEUR** du workflow (colonne « Créé par » — capital pour dire « mi4 a fait le cœur métier, l'agence la plomberie »),
+- **le CRÉATEUR** du workflow (colonne « Créé par » — capital pour dire « l'ancien prestataire a fait le cœur métier, l'agence la plomberie »),
 - **les VOLUMES d'enrôlés** (total + récent — capital pour dire ce qui tourne vraiment vs ce qui dort).
 
 **Endpoints** (Private App token, scope `automation` — cf `hubspot-crm` / `secrets.local`) :
@@ -136,7 +136,7 @@ with open("<path>/_workflows-dump.local","w",encoding="utf-8") as fo:
 L'API n'a **ni** le créateur **ni** les enrôlés. On les lit dans l'UI, une fois, pour compléter les 2 colonnes vides du dump :
 
 - **Ouvrir la liste des workflows** : `https://app.hubspot.com/workflows/{portail}/view/all` → **`get_page_text`** (Chrome MCP). La table liste **« Créé par »** + **volumes d'enrôlés** (total, et souvent « X sur 7 jours »). Recouper par nom/ID avec le dump API.
-- **Créateur = clé de lecture** : c'est ce qui permet de dire « **mi4** (l'ancienne agence) a bâti le cœur métier lifecycle · **l'agence (l'utilisateur)** a bâti la plomberie data ». La **couleur de la carte Mermaid = le créateur** (§5).
+- **Créateur = clé de lecture** : c'est ce qui permet de dire « **l'ancien prestataire** a bâti le cœur métier lifecycle · **l'agence (l'utilisateur)** a bâti la plomberie data ». La **couleur de la carte Mermaid = le créateur** (§5).
 - **🔗 Make / n8n / Zapier = BOÎTE NOIRE.** Un flow qui envoie de la donnée à Make (action `WEBHOOK`, ou une propriété « … envoyée à Make ») ne montre côté HubSpot **que sa moitié** : le vrai scénario vit **sur le compte Make du client**. → on le **note** (« 🔗Make »), on **demande l'accès au client** pour vérifier, et on **ne touche à rien** sans go explicite. On documente uniquement ce que le workflow HubSpot fait (« tague X et l'envoie à Make pour Y »), pas ce qu'on ne voit pas.
 
 ## §4 Flags santé (le « bilan »)
@@ -150,7 +150,7 @@ L'API n'a **ni** le créateur **ni** les enrôlés. On les lit dans l'UI, une fo
 
 ## §5 Le doc d'audit (livrable type) + carte Mermaid
 
-Structure (cf `memory/clients/<client-slug>/audit-workflows.md`, le livrable **prouvé** : 43 flows, 23 actifs) :
+Structure (cf `memory/clients/<client-slug>/audit-workflows.md`, le livrable **prouvé**) :
 
 1. **🧭 Ce qui ressort** — qui fait quoi (par créateur), les volumes, les points Make. 3-5 lignes en tête.
 2. **🟢 MÉTIER / lifecycle marketing** (table triée par volume) — `ID · Nom · Déclencheur · Actions · Enrôlés total · 7j · Créé par`. C'est le parcours d'achat (anniversaire, panier abandonné, cross-selling, fidélisation, inactivité…).
@@ -247,9 +247,9 @@ flowchart LR
 
 ## §7 Cas inaugural — <Client> (2026-07-21)
 
-Portail `<portal-id>` : **43 flows cartographiés · 23 ACTIFS · 20 OFF** via ce flow (API `automation/v4/flows` + lecture UI pour créateur & enrôlés) → `memory/clients/<client-slug>/audit-workflows.md` (dump : `_workflows-dump.local`). Findings : **13 workflows métier lifecycle** (cœur bâti par **mi4** — un ancien collaborateur, un ancien collaborateur) · **10 data-ops plomberie** (bâtis par **l'agence**) · **1 point Make** (Browsing History → boîte noire, accès demandé au client) · une pile de « Unnamed workflow » abandonnés côté éteints · carte Mermaid rendue sur Notion (« Cartographie des automatisations HubSpot »).
+Portail `<portal-id>` : **tous les flows cartographiés, actifs et éteints** via ce flow (API `automation/v4/flows` + lecture UI pour créateur & enrôlés) → `memory/clients/<client-slug>/audit-workflows.md` (dump : `_workflows-dump.local`). Findings : **des workflows métier lifecycle** (cœur bâti par **l'ancien prestataire**) · **des data-ops plomberie** (bâtis par **l'agence**) · **un point Make** (boîte noire, accès demandé au client) · une pile de « Unnamed workflow » abandonnés côté éteints · carte Mermaid rendue sur Notion (« Cartographie des automatisations HubSpot »).
 
-**Suite 2026-07-28 — d'où viennent §5bis et §5ter.** Le même portail a servi de banc d'essai à l'axe scénario : les 13 workflows lifecycle rangés en **4/3/6** par objectif contre **7/3/3** par déclencheur (3 workflows de fidélisation ambigus, d'où la règle des 2 variantes). Le diagramme relations y a révélé ce que les tables cachaient : **6 workflows sur 13 partagent le même pool d'enrôlement** (risque de double sollicitation prouvé sur un cas réel), une chaîne à 3 seuils sur le compteur de commandes, et **2 trous de couverture** (le visiteur anonyme, très majoritaire dans le trafic panier, et l'absence totale de mesure du revenu par workflow).
+**Suite 2026-07-28 — d'où viennent §5bis et §5ter.** Le même portail a servi de banc d'essai à l'axe scénario : les workflows lifecycle rangés par objectif puis par déclencheur (quelques workflows de fidélisation ambigus, d'où la règle des 2 variantes). Le diagramme relations y a révélé ce que les tables cachaient : **une bonne partie des workflows partagent le même pool d'enrôlement** (risque de double sollicitation prouvé sur un cas réel), une chaîne de seuils sur le compteur de commandes, et **deux trous de couverture** (le visiteur anonyme, très majoritaire dans le trafic panier, et l'absence totale de mesure du revenu par workflow).
 
 ## Skills liés
 `hubspot-segments-audit` (le jumeau, pour les segments) · `revops-api-scripts` (scripter l'API HubSpot) · `crm-investigation-output` (format de rendu) · `hubspot-crm` (règles CRM + token) · `claude-breeze` (le jumeau UI-first — déléguer le diagnostic à Breeze en tokens gratuits, OU auditer écran par écran une fonctionnalité sans API de dump).
